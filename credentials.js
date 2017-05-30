@@ -1,0 +1,1 @@
+module.exports = {cookieSecret: 'Visst gör det ont när knoppar brister.',};
