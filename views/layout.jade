@@ -1,0 +1,48 @@
+include includes/top/navbar
+include includes/left/layers
+include includes/left/properties
+include includes/right/feed
+doctype html
+html(land="se")
+  head
+    title Duria.se
+    meta(charset='utf-8')
+    meta(name='description' content='Web GIS lösningar av Daniel Rasmussen')
+    meta(name='keywords' content='GIS')
+    meta(name='author' content='Daniel Rasmussen')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/ol3/4.1.1/ol.css', integrity='sha384-qvEMHURr32YrejBOU8/dilpPAN+57iD03+SUiYjxgbpKgXGN5+4gVpajdyRw4QgJ', crossorigin='anonymus')
+    link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u', crossorigin='anonymus')
+    link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', integrity='sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN', crossorigin='anonymus')
+    link(rel='stylesheet', href='/stylesheets/layout_style.css')
+  body
+    .container
+      block navbar
+          +navbar
+    .navbar-offset
+    #map
+    .row.main-row
+      .col-sm-4.col-md-3.sidebar.sidebar-left.pull-left
+        #accordion-left.panel-group.sidebar-body
+          .panel.panel-default
+            block layers
+              +layers
+          .panel.panel-default
+            block properties
+              +properties
+      .col-sm-4.col-md-6.mid
+      .col-sm-4.col-md-3.sidebar.sidebar-right.pull-right
+        #accordion-right.panel-group.sidebar-body
+          .panel.panel-default
+            block feed
+              +feed
+    .mini-submenu.mini-submenu-left.pull-left
+      i(class='fa fa-list-alt')
+    .mini-submenu.mini-submenu-right.pull-right
+      i(class='fa fa-rss')
+
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/ol3/4.1.1/ol.js', integrity='sha384-oaswepoPDnt10p+m6EF7IhHMg3pFuN3ZiJ/TxSEYIdaeqZ//ihlFKScJEtyBqkPg', crossorigin='anonymus')
+    script(src='//code.jquery.com/jquery-3.2.1.min.js', integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin='anonymus')
+    script(src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js' integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymus')
+    script(src='/javascripts/layout_script.js')

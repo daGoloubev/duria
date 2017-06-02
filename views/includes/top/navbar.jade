@@ -1,0 +1,36 @@
+mixin navbar
+  nav.navbar.navbar-fixed-top.navbar-default(role='navigation')
+      .container-fluid
+          .navbar-header
+              button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='#meny')
+                span(class='sr-only') Toggle navigation
+                - for (var i = 0; i < 4; i++) {
+                  span(class='icon-bar')
+                - }
+              a(class='navbar-brand', href='https://duria.se')
+                i(class='fa fa-home fa-lg', aria-hidden='true')&nbsp; Duria.se
+          .collpapse.navbar-collapse#meny
+              ul(class='nav navbar-nav')
+                  li
+                    a(href='#')
+                      i(class='fa fa-location-arrow fa-lg', aria-hidden='true')&nbsp; Min position
+                  li
+                      a(href='#')
+                        i(class='fa fa-plus-square fa-lg', aria-hidden='true')&nbsp; Rapportera
+                  li(class='dropdown')
+                    a(href='#', class='dropdown-toggle', data-toggle='dropdown')
+                      i(class='fa fa-hand-o-up fa-lg', aria-hidden='true')&nbsp; Urval
+                    ul.dropdown-menu
+                        li
+                           a(href='#') Enkel
+                        li
+                           a(href='#') Box
+              form(class='navbar-form navbar-nav', role='search')
+                  .form-group
+                    input(type='text', class='form-control', placeholder='Adress')
+                  button(type='submit', class='btn btn-default')
+                      i(class='fa fa-search fa-lg', aria-hidden='true')&nbsp; Sök
+              ul.nav.navbar-nav.navbar-nav
+                  li
+                      a(href='#')
+                        i(class='fa fa-info-circle fa-lg', aria-hidden='true') &nbsp;Instruktioner
