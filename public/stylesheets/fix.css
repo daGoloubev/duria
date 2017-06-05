@@ -1,0 +1,9 @@
+label.list-group-item.checkbox-inline:first-child {
+    margin-left: 10px;
+}
+div.panel-body.list-group {
+    padding-top: 0px;
+}
+label.list-group-item.checkbox-inline:first-child {
+    border-top: 0px;
+}

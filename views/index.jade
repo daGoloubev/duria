@@ -1,2 +1,29 @@
+include includes/modals/geolocation
+include includes/modals/error_modal
+include includes/left/layers
+include includes/left/properties
+include includes/right/feed
 extends layout
-
+block content
+    #map
+    .row.main-row
+        .col-sm-4.col-md-3.sidebar.sidebar-left.pull-left
+            #accordion-left.panel-group.sidebar-body
+                .panel.panel-default
+                    block layers
+                        +layers
+                .panel.panel-default
+                    block properties
+                        +properties
+        .col-sm-4.col-md-6.mid
+        .col-sm-4.col-md-3.sidebar.sidebar-right.pull-right
+            //- #accordion-right.panel-group.sidebar-body
+                .panel.panel-default
+                    block feed
+                         +feed
+    .mini-submenu.mini-submenu-left.pull-left
+        i(class='fa fa-stack-exchange')
+    //-.mini-submenu.mini-submenu-right.pull-right
+        i(class='fa fa-rss')
+    +geolocation('geolocation_modal', 'Geolocation', 'Vi kommer nu att använda oss av er inbyggda GPS sensor för att ta reda på er position och förflytta er till den delen av kartan.')
+    +em

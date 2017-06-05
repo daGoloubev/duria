@@ -4,15 +4,15 @@ mixin navbar
           .navbar-header
               button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='#meny')
                 span(class='sr-only') Toggle navigation
-                - for (var i = 0; i < 4; i++) {
+                - for (var i = 0; i < 3; i++) {
                   span(class='icon-bar')
                 - }
-              a(class='navbar-brand', href='https://duria.se')
+               a(class='navbar-brand visible-xs-block', href='https://duria.se')
                 i(class='fa fa-home fa-lg', aria-hidden='true')|&nbsp; Duria.se
-          .collpapse.navbar-collapse#meny
+          .collapse.navbar-collapse#meny
               ul(class='nav navbar-nav')
                   li
-                    a(href='#')
+                    a(href='#', data-toggle='modal', data-target='#geolocation_modal', id='Min_position')
                       i(class='fa fa-location-arrow fa-lg', aria-hidden='true')|&nbsp; Min position
                   li
                       a(href='#')
@@ -27,10 +27,10 @@ mixin navbar
                            a(href='#') Box
               form(class='navbar-form navbar-nav', role='search')
                   .form-group
-                    input(type='text', class='form-control', placeholder='Adress')
+                    input(type='text', class='form-control', placeholder='Sök Adress')
                   button(type='submit', class='btn btn-default')
-                      i(class='fa fa-search fa-lg', aria-hidden='true')|&nbsp; Sök
-              ul.nav.navbar-nav.navbar-nav
+                      i(class='fa fa-search fa-lg', aria-hidden='true')|&nbsp;
+              //- ul.nav.navbar-nav.navbar-nav
                   li
                       a(href='#')
                         i(class='fa fa-info-circle fa-lg', aria-hidden='true') &nbsp;Instruktioner
