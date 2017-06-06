@@ -75,11 +75,35 @@ var layerTree =  function(options){
   }
 };
 layerTree.prototype.showErrorMsg = function(txt){
-    document.getElementById('em_model_body').innerHTML += txt;
+    document.getElementById('em_model_body').innerHTML = txt;
     $('#em_model').modal('show');
 };
+
 function init(){
     document.removeEventListener('DOMContentLoaded', init);
+
+    function pantopoint(geolocation){
+        var point = ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
+        function getLvl(geolocation){
+            if(geolocation.getAccuracy() > 2000){
+                return 13;
+            } else {
+                return 15;
+            }
+            return 10;
+        };
+        view.animate({
+            center: ol.proj.fromLonLat(point),
+            zoom: parseInt(getLvl(geolocation)),
+            duration: 2000
+        });
+        //map.getLayers().forEach(function(l){
+        //    if(l.get('alias') === 'GPS'){
+        //        var e = l.getSource().getExtent();
+        //        map.getView().fit(e, map.getSize());
+        //    }
+        //});
+    }
     var view = new ol.View({
         center: [1908533.467, 8551296.993],
         zoom: 11
@@ -103,6 +127,13 @@ function init(){
                 name: 'OpenStreetMap',
                 alias: 'Karta',
                 iconName: 'globe'
+            }),
+            new ol.layer.Vector({
+                source: new ol.source.Vector({
+                }),
+                name: 'Geolocation',
+                alias: 'GPS',
+                iconName: 'signal'
             })
         ],
         view: view
@@ -113,17 +144,7 @@ function init(){
         if(l.get('name'))
             tree.createRegistry(l);
     });
-    function doBo(location){
-        var b = ol.animation.bounce({
-            resolution: map.getView().getResolution() * 2
-        });
-        var p = ol.animation.pan({
-           source: map.getView().getCenter()
-        });
-        map.beforeRender(b);
-        map.beforeRender(p);
-        map.getView().setCenter(location);
-    }
+
     function resetPropText(){
         document.getElementById('accuracy').innerHTML = 'Noggrannhet: - m';
         document.getElementById('altitude').innerHTML = 'Höjd över havet: - m';
@@ -132,26 +153,26 @@ function init(){
         document.getElementById('speed').innerHTML = 'Hastighet: - m/s';
     }
     var geolocation = new ol.Geolocation({
-        projecton: view.getProjection()
+        projection: view.getProjection(),
+        options: {
+            enableHighAccuracy: true,
+            timeout: 3000,
+            maximumAge: 0
+        }
     });
     document.getElementById('geolocation_modal_accept').addEventListener('click', function(){
         geolocation.setTracking(true);
-        if(geolocation.getPosition() === undefined){
-            tree.showErrorMsg('No position was found :(');
-            $('#Min_position').prop( "disabled", true );
-            $('#properties').toggle();
-            $('div.panel.panel-default:nth-child(2)').toggle();
-        }else{
-            doBo(geolocation.getPosition());
-        }
+        $('#meny').collapse('hide');
     });
     document.getElementById('geolocation_modal_denied').addEventListener('click', function(){
         geolocation.setTracking(false);
         resetPropText();
+        $('#meny').collapse('hide');
     });
     document.getElementById('geolocation_modal_close').addEventListener('click', function(){
         geolocation.setTracking(false);
         resetPropText();
+        $('#meny').collapse('hide');
     });
     geolocation.on('change', function(){
        document.getElementById('accuracy').innerHTML = geolocation.getAccuracy() !== undefined ? 'Noggrannhet: '+geolocation.getAccuracy() + ' m': 'Noggrannhet: - m';
@@ -159,13 +180,15 @@ function init(){
        document.getElementById('altitudeAcc').innerHTML = geolocation.getAltitudeAccuracy() !== undefined ? 'Höjd över havet (Noggrannhet): '+geolocation.getAltitudeAccuracy() + ' m': 'Höjd över havet (Noggrannhet): - m';
        document.getElementById('heading').innerHTML = geolocation.getHeading() !== undefined ? 'Bäring: '+geolocation.getHeading() + ' rad': 'Bäring: - rad';
        document.getElementById('speed').innerHTML = geolocation.getSpeed() !== undefined ? 'Hastighet: '+geolocation.getSpeed() + ' m/s': 'Hastighet: - m/s';
+       if(geolocation.getPosition() !== undefined)
+           pantopoint(geolocation);
     });
     geolocation.on('error', function(error){
         tree.showErrorMsg(error.message);
     });
     var accuracyFeature = new ol.Feature();
-    geolocation.on('change:accuracyGeometry', function(){
-       accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+    geolocation.on('change:accuracyGeometry', function() {
+        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
     });
     var positionFeature = new ol.Feature();
     positionFeature.setStyle(new ol.style.Style({
@@ -180,15 +203,24 @@ function init(){
             })
         })
     }));
-    geolocation.on('change:position', function(){
-       var coordinates = geolocation.getPosition();
-       positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+    geolocation.on('change:position', function() {
+        var coordinates = new ol.geom.Point(ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326'));
+        positionFeature.setGeometry(coordinates ? coordinates : null);
+    })
+    map.getLayers().forEach(function(l){
+        if(l.get('alias') === 'GPS'){
+            var s = l.getSource();
+            s.addFeature(accuracyFeature, positionFeature);
+        }
     });
-    new ol.layer.Vector({
-       map: map,
-       source: new ol.source.Vector({
-           features: [accuracyFeature, positionFeature]
-       })
+    $('.Geolocation_checkbox').on('change', function(){
+        if(this.checked){
+            if(geolocation.getPosition() === undefined){
+                tree.showErrorMsg('Aktivera din position genom att klicka på Min positionen i menyn.')
+            } else {
+                pantopoint(geolocation);
+            }
+        }
     });
 }
 document.addEventListener('DOMContentLoaded', init);
