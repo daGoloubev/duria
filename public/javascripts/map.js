@@ -81,10 +81,16 @@ layerTree.prototype.showErrorMsg = function(txt){
 
 function init(){
     document.removeEventListener('DOMContentLoaded', init);
-
+    function getCenterOfExtent(Extent){
+        var X = Extent[0] + (Extent[2]-Extent[0])/2;
+        var Y = Extent[1] + (Extent[3]-Extent[1])/2;
+        return [X, Y];
+    }
     function pantopoint(geolocation){
         var point = ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
+
         function getLvl(geolocation){
+            var extent = geolocation.getAccuracyGeometry().getExtent();
             if(geolocation.getAccuracy() > 2000){
                 return 13;
             } else {
@@ -97,17 +103,15 @@ function init(){
             zoom: parseInt(getLvl(geolocation)),
             duration: 2000
         });
-        //map.getLayers().forEach(function(l){
-        //    if(l.get('alias') === 'GPS'){
-        //        var e = l.getSource().getExtent();
-        //        map.getView().fit(e, map.getSize());
-        //    }
-        //});
+
+        //var ex = geolocation.getAccuracyGeometry().getExtent();
+        //map.getView().fit(ex);
     }
     var view = new ol.View({
         center: [1908533.467, 8551296.993],
         zoom: 11
     });
+
     var map = new ol.Map({
         target: "map",
         layers: [
@@ -129,12 +133,40 @@ function init(){
                 iconName: 'globe'
             }),
             new ol.layer.Vector({
-                source: new ol.source.Vector({
-                }),
+                visible: true,
+                source: new ol.source.Vector({}),
                 name: 'Geolocation',
                 alias: 'GPS',
                 iconName: 'signal'
+            }),
+            new ol.layer.Vector({
+                visible: true,
+                source: new ol.source.Vector({
+                    url: '/points',
+                    format: new ol.format.GeoJSON()
+                }),
+                style: new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 10,
+                        fill: new ol.style.Fill({color: 'rgba(254,165,83,1)'}),
+                        stroke: new ol.style.Stroke({color: 'rgba(254,127,14,1)', width: 3})
+                    })
+                }),
+                name: 'Points',
+                alias: 'Väghinder',
+                iconName: 'exclamation-triangle'
             })
+
+        ],
+        controls: [
+            new ol.control.MousePosition({
+                coordinateFormat: function(coordinates){
+                    var x = coordinates[0].toFixed(3);
+                    var y = coordinates[1].toFixed(3);
+                    return x + ' ' + y;
+                }
+            })
+            //,target:
         ],
         view: view
     });
@@ -144,7 +176,7 @@ function init(){
         if(l.get('name'))
             tree.createRegistry(l);
     });
-
+    map.render();
     function resetPropText(){
         document.getElementById('accuracy').innerHTML = 'Noggrannhet: - m';
         document.getElementById('altitude').innerHTML = 'Höjd över havet: - m';
