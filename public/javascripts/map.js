@@ -82,9 +82,22 @@ function init(){
     document.removeEventListener('DOMContentLoaded', init);
     ////////////////////////// VARIABLES ///////////////////////////////////
     var thread;
+    var positionFeature = new ol.Feature();
+    positionFeature.setStyle(new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 6,
+            fill: new ol.style.Fill({
+                color: '#3399CC'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#fff',
+                width: 2
+            })
+        })
+    }));
     var view = new ol.View({
         center: [1908533.467, 8551296.993],
-        zoom: 5,
+        zoom: 13,
         minZoom: 4,
         maxZoom: 19
     });
@@ -102,7 +115,7 @@ function init(){
                 iconName: 'plane'
             }),
             new ol.layer.Tile({
-                visible: true,
+                visible: false,
                 source: new ol.source.OSM(),
                 name: 'OpenStreetMap',
                 alias: 'Karta',
@@ -116,9 +129,9 @@ function init(){
                 iconName: 'signal'
             }),
             new ol.layer.Vector({
-                visible: true,
+                visible: false,
                 source: new ol.source.Vector({
-                    url: '/points',
+                    url: 'https://duria.se/points',
                     format: new ol.format.GeoJSON()
                 }),
                 style: new ol.style.Style({
@@ -149,6 +162,41 @@ function init(){
         if(l.get('name'))
             tree.createRegistry(l);
     });
+    ///////////////// TEST LAYER
+    var url = '/points';
+    var vectorSource = new ol.source.Vector({
+        strategy: ol.loadingstrategy.bbox,
+        loader: function(extent, resolution, projection) {
+            $.ajax(url).then(function(response) {
+                var features = response.features;
+                features.forEach(function(feature){
+                  if(vectorSource.getFeatures().length < features.length){
+                      //console.log(feature.geometry.coordinates)
+                      var tmp = new ol.Feature({
+                          geometry: new ol.geom.Point(ol.proj.transform(feature.geometry.coordinates, 'EPSG:4326', 'EPSG:3857'))
+                      });
+                      vectorSource.addFeature(tmp);
+                    }
+                });
+                //var test = features[0];
+                //var tmp = new ol.Feature({
+                //    geometry: new ol.geom.Point(ol.proj.transform(test.geometry.coordinates, 'EPSG:4326', 'EPSG:3857'))
+                //});
+                //console.log(tmp)
+                //vectorSource.addFeature(tmp);
+                //console.log(vectorSource.getFeatures().length);
+                //console.log(features.length);
+                //console.log(features);
+                //var features = format.readFeatures(response,
+                //    {featureProjection: 'EPSG:3857'});
+                //vectorSource.addFeatures(features[0]);
+            });
+        }
+    });
+    vectorSource.clear(true);
+    var vectorLayer = new ol.layer.Vector({source: vectorSource});
+    map.addLayer(vectorLayer);
+    ///////////////////////////////////////////////////////
     var geolocation = new ol.Geolocation({
         projection: view.getProjection(),
         options: {
@@ -159,13 +207,13 @@ function init(){
     });
     //////////////////////// FUNCTIONS ////////////////////////////////
     function pantopoint(geolocation){
-        var point = ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
         view.animate({
-            center: ol.proj.fromLonLat(point),
+            center: geolocation.getPosition(),
             zoom: 12,
             duration: 2000
-        })
+        });
     }
+    // Göra om design?
     function resetPropText(){
         document.getElementById('accuracy').innerHTML = 'Noggrannhet: - m';
         document.getElementById('altitude').innerHTML = 'Höjd över havet: - m';
@@ -191,39 +239,43 @@ function init(){
     //map.addLayer(vectorLayer);
     //var vectorExtent = vectorSource.getExtent();
 
-    function doZoom(){
-        if(doZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == true && doZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == false){
+    function adjustZoom(){
+        if(needsZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == true && neeedsZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == false){
             //zooma in
-            map.getView().setZoom(map.getView().getZoom() + Math.pow(0.1,2));
-            thread = setTimeout(function(){ doZoom(); }, 1);
-        } else if (doZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == false && doZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == true){
+            map.getView().setCenter(geolocation.getPosition());
+            map.getView().setZoom(map.getView().getZoom() + Math.pow(0.15,2));
+            thread = setTimeout(function(){ adjustZoom(); }, 1);
+        } else if (needsZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == false && neeedsZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == true){
             //zooma ut
-            map.getView().setZoom(map.getView().getZoom() - Math.pow(0.1,2));
-            thread = setTimeout(function(){ doZoom(); }, 1);
+            map.getView().setCenter(geolocation.getPosition());
+            map.getView().setZoom(map.getView().getZoom() - Math.pow(0.15,2));
+            thread = setTimeout(function(){ adjustZoom(); }, 1);
         } else {
             clearTimeout(thread);
         }
     }
-    function doZoomIN(map, vector){
+    function needsZoomIN(map, vector){
         var map = map.getView().calculateExtent(map.getSize());
         return ol.extent.containsExtent(map, vector);
     }
-    function doZoomOUT(map, vector){
+    function neeedsZoomOUT(map, vector){
         var map = map.getView().calculateExtent(map.getSize());
         return ol.extent.containsExtent(vector, map);
     }
-
     ///////////////// EVENTS SANDOBOX ////////////////////////////////
     //map.on('moveend', function(e){
         //mapExtent = map.getView().calculateExtent(map.getSize());
         //var equal = ol.extent.equals(mapExtent, vectorExtent);
         //console.log(equal);
-        //console.log('Do zoom in: '+doZoomIN(map, vectorExtent));
-        //console.log('Do zoom out: '+doZoomOUT(map, vectorExtent));
+        //console.log('Do zoom in: '+needsZoomIN(map, vectorExtent));
+        //console.log('Do zoom out: '+neeedsZoomOUT(map, vectorExtent));
     //});
     /////////////////////// EVENTS ////////////////////////////////////
+    map.on('moveend', function(e){
+
+    });
     document.getElementById('Report').addEventListener('click', function(){
-        doZoom();
+        adjustZoom();
         $('#meny').collapse('hide');
     });
 
@@ -247,9 +299,9 @@ function init(){
        document.getElementById('altitudeAcc').innerHTML = geolocation.getAltitudeAccuracy() !== undefined ? 'Höjd över havet (Noggrannhet): '+geolocation.getAltitudeAccuracy() + ' m': 'Höjd över havet (Noggrannhet): - m';
        document.getElementById('heading').innerHTML = geolocation.getHeading() !== undefined ? 'Bäring: '+geolocation.getHeading() + ' rad': 'Bäring: - rad';
        document.getElementById('speed').innerHTML = geolocation.getSpeed() !== undefined ? 'Hastighet: '+geolocation.getSpeed() + ' m/s': 'Hastighet: - m/s';
-       if(geolocation.getPosition() !== undefined)
+       if(geolocation.getPosition() !== undefined){
            pantopoint(geolocation);
-           geoExtent = geolocation.getAccuracyGeometry().getExtent();
+       }
     });
     geolocation.on('error', function(error){
         tree.showErrorMsg(error.message);
@@ -258,19 +310,6 @@ function init(){
     geolocation.on('change:accuracyGeometry', function() {
         accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
     });
-    var positionFeature = new ol.Feature();
-    positionFeature.setStyle(new ol.style.Style({
-        image: new ol.style.Circle({
-            radius: 6,
-            fill: new ol.style.Fill({
-                color: '#3399CC'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#fff',
-                width: 2
-            })
-        })
-    }));
     geolocation.on('change:position', function() {
         var coordinates = new ol.geom.Point(ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326'));
         positionFeature.setGeometry(coordinates ? coordinates : null);
@@ -284,9 +323,11 @@ function init(){
     $('.Geolocation_checkbox').on('change', function(){
         if(this.checked){
             if(geolocation.getPosition() === undefined){
-                tree.showErrorMsg('Aktivera din position genom att klicka på Min positionen i menyn.')
+                tree.showErrorMsg('Aktivera din position genom att klicka på Min positionen i menyn.');
             } else {
-                pantopoint(geolocation);
+                //pantopoint(geolocation);
+                adjustZoom();
+
             }
         }
     });

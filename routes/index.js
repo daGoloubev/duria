@@ -40,7 +40,7 @@ router.post('/add', function(req, res, next) {
          return res.status(500).json({success: false, data: err});
         }
         // GÖR OM
-        client.query("INSERT INTO loc(geom) VALUES (ST_GeomFromText('POINT(17.9349051315434 60.1754333770934)', 4326));", function(err, result){
+        client.query("INSERT INTO loc(geom) VALUES (ST_GeomFromText('POINT(17.5349051315434 60.1754333770934)', 4326));", function(err, result){
                 done();
                 if(err) return res.send(err);
                 res.redirect('/');
