@@ -1,4 +1,3 @@
-
 var layerTree =  function(options){
   'use strict';
   if(!(this instanceof layerTree)){
@@ -78,45 +77,22 @@ layerTree.prototype.showErrorMsg = function(txt){
     document.getElementById('em_model_body').innerHTML = txt;
     $('#em_model').modal('show');
 };
-
+///////////////// SANDBOX ////////////////////////////////
 function init(){
     document.removeEventListener('DOMContentLoaded', init);
-    function getCenterOfExtent(Extent){
-        var X = Extent[0] + (Extent[2]-Extent[0])/2;
-        var Y = Extent[1] + (Extent[3]-Extent[1])/2;
-        return [X, Y];
-    }
-    function pantopoint(geolocation){
-        var point = ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
-
-        function getLvl(geolocation){
-            var extent = geolocation.getAccuracyGeometry().getExtent();
-            if(geolocation.getAccuracy() > 2000){
-                return 13;
-            } else {
-                return 15;
-            }
-            return 10;
-        };
-        view.animate({
-            center: ol.proj.fromLonLat(point),
-            zoom: parseInt(getLvl(geolocation)),
-            duration: 2000
-        });
-
-        //var ex = geolocation.getAccuracyGeometry().getExtent();
-        //map.getView().fit(ex);
-    }
+    ////////////////////////// VARIABLES ///////////////////////////////////
+    var thread;
     var view = new ol.View({
         center: [1908533.467, 8551296.993],
-        zoom: 11
+        zoom: 5,
+        minZoom: 4,
+        maxZoom: 19
     });
-
     var map = new ol.Map({
         target: "map",
         layers: [
             new ol.layer.Tile({
-                visible: true,
+                visible: false,
                 source: new ol.source.BingMaps({
                     key: 'Aj0LLnXkcQViB8dmKhWrqiVDbhKqJUE3-ROu6f6NKQbL73li6F_Ob7aHEyMCBmcw',
                     imagerySet: 'Aerial'
@@ -156,34 +132,23 @@ function init(){
                 alias: 'Väghinder',
                 iconName: 'exclamation-triangle'
             })
-
         ],
         controls: [
             new ol.control.MousePosition({
-                coordinateFormat: function(coordinates){
+                coordinateFormat: function (coordinates) {
                     var x = coordinates[0].toFixed(3);
                     var y = coordinates[1].toFixed(3);
                     return x + ' ' + y;
-                }
+                }// TARGET variant A eller variant B etc..
             })
-            //,target:
         ],
         view: view
     });
-
     var tree = new layerTree({map: map, target: 'layers'});
     map.getLayers().forEach(function(l){
         if(l.get('name'))
             tree.createRegistry(l);
     });
-    map.render();
-    function resetPropText(){
-        document.getElementById('accuracy').innerHTML = 'Noggrannhet: - m';
-        document.getElementById('altitude').innerHTML = 'Höjd över havet: - m';
-        document.getElementById('altitudeAcc').innerHTML = 'Höjd över havet (Noggrannhet): - m';
-        document.getElementById('heading').innerHTML = 'Bäring: - rad';
-        document.getElementById('speed').innerHTML = 'Hastighet: - m/s';
-    }
     var geolocation = new ol.Geolocation({
         projection: view.getProjection(),
         options: {
@@ -192,6 +157,76 @@ function init(){
             maximumAge: 0
         }
     });
+    //////////////////////// FUNCTIONS ////////////////////////////////
+    function pantopoint(geolocation){
+        var point = ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
+        view.animate({
+            center: ol.proj.fromLonLat(point),
+            zoom: 12,
+            duration: 2000
+        })
+    }
+    function resetPropText(){
+        document.getElementById('accuracy').innerHTML = 'Noggrannhet: - m';
+        document.getElementById('altitude').innerHTML = 'Höjd över havet: - m';
+        document.getElementById('altitudeAcc').innerHTML = 'Höjd över havet (Noggrannhet): - m';
+        document.getElementById('heading').innerHTML = 'Bäring: - rad';
+        document.getElementById('speed').innerHTML = 'Hastighet: - m/s';
+    }
+    ///////////// TEST EXTENT
+    //var mapExtent = map.getView().calculateExtent(map.getSize());
+    //var vectorSource = new ol.source.Vector({wrapX: false});
+    //var thing = new ol.geom.Polygon( [[
+    //    [1907394.0775471241, 8552246.484210731],
+    //    [1907394.0775471241, 8550347.50178927],
+    //    [1909672.8564528758, 8550347.50178927],
+    //    [1909672.8564528758, 8552246.484210731]
+    //]]);
+    //var featurething = new ol.Feature({
+    //    name: "Thing",
+    //    geometry: thing
+    //});
+    //vectorSource.addFeature( featurething );
+    //vectorLayer = new ol.layer.Vector({wrapX: false, source: vectorSource});
+    //map.addLayer(vectorLayer);
+    //var vectorExtent = vectorSource.getExtent();
+
+    function doZoom(){
+        if(doZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == true && doZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == false){
+            //zooma in
+            map.getView().setZoom(map.getView().getZoom() + Math.pow(0.1,2));
+            thread = setTimeout(function(){ doZoom(); }, 1);
+        } else if (doZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == false && doZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == true){
+            //zooma ut
+            map.getView().setZoom(map.getView().getZoom() - Math.pow(0.1,2));
+            thread = setTimeout(function(){ doZoom(); }, 1);
+        } else {
+            clearTimeout(thread);
+        }
+    }
+    function doZoomIN(map, vector){
+        var map = map.getView().calculateExtent(map.getSize());
+        return ol.extent.containsExtent(map, vector);
+    }
+    function doZoomOUT(map, vector){
+        var map = map.getView().calculateExtent(map.getSize());
+        return ol.extent.containsExtent(vector, map);
+    }
+
+    ///////////////// EVENTS SANDOBOX ////////////////////////////////
+    //map.on('moveend', function(e){
+        //mapExtent = map.getView().calculateExtent(map.getSize());
+        //var equal = ol.extent.equals(mapExtent, vectorExtent);
+        //console.log(equal);
+        //console.log('Do zoom in: '+doZoomIN(map, vectorExtent));
+        //console.log('Do zoom out: '+doZoomOUT(map, vectorExtent));
+    //});
+    /////////////////////// EVENTS ////////////////////////////////////
+    document.getElementById('Report').addEventListener('click', function(){
+        doZoom();
+        $('#meny').collapse('hide');
+    });
+
     document.getElementById('geolocation_modal_accept').addEventListener('click', function(){
         geolocation.setTracking(true);
         $('#meny').collapse('hide');
@@ -214,6 +249,7 @@ function init(){
        document.getElementById('speed').innerHTML = geolocation.getSpeed() !== undefined ? 'Hastighet: '+geolocation.getSpeed() + ' m/s': 'Hastighet: - m/s';
        if(geolocation.getPosition() !== undefined)
            pantopoint(geolocation);
+           geoExtent = geolocation.getAccuracyGeometry().getExtent();
     });
     geolocation.on('error', function(error){
         tree.showErrorMsg(error.message);

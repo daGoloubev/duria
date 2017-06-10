@@ -1,9 +1,9 @@
 include includes/top/navbar
 include includes/favicon/favicon
 doctype html
-html(land="se")
+html(lang="se")
   head
-    title #{title}
+    title duria.se
     meta(charset='utf-8')
     meta(name='description' content='Web GIS lösningar av Daniel Goloubev')
     meta(name='keywords' content='GIS')
@@ -25,7 +25,9 @@ html(land="se")
     block content
 
     script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/ol3/4.1.1/ol.js', integrity='sha384-oaswepoPDnt10p+m6EF7IhHMg3pFuN3ZiJ/TxSEYIdaeqZ//ihlFKScJEtyBqkPg', crossorigin='anonymus')
+    script(type='text/javascript', src='/libs/ol/v4.1.1/ol.js')
     script(type='text/javascript', src='//code.jquery.com/jquery-3.2.1.min.js', integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=', crossorigin='anonymus')
+    script(type='text/javascript', src='/libs/jquery/v3.2.1/jquery-3.2.1.js')
     script(type='text/javascript', src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js' integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymus')
     script(type='text/javascript', src='/javascripts/layout_script.js', integrity='sha384-RNZPtptijC20tcKZowgtbL478GTeseVAcIGraN5eMNn8xnnzB8uIOTv+O84zFvDY', crossorigin='anonymus')
     script(type='text/javascript', src='/javascripts/map.js')
