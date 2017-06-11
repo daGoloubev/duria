@@ -11,7 +11,6 @@ router.get('/', function(req, res, next) {
     title: 'Duria.se'
   });
 });
-
 /* GET pg json data. */
 router.get('/points', function (req, res) {
         var client = new pg.Client(conString);
@@ -33,21 +32,29 @@ router.get('/points', function (req, res) {
         });
 });
 // Add data
-router.post('/add', function(req, res, next) {
+router.post('/report', function(req, res, next) {
+    var x = req.body.x_coordinates;
+    var y = req.body.y_coordinates;
+    // PREPARED STATEMENT FUNGERAR EJ.... query, [v1, v2]
+    var q = "INSERT INTO loc(geom) VALUES (ST_GeomFromText('POINT($1  $2)', 4326));";
+    var q2 = "INSERT INTO loc(geom) VALUES (ST_GeomFromText('POINT("+x+" "+y+")', 4326));";
     pg.connect(conString, function(err, client, done){
         if(err){
-         done();
-         return res.status(500).json({success: false, data: err});
+            done();
+            return res.status(500).json({success: false, data: err});
         }
         // GÖR OM
-        client.query("INSERT INTO loc(geom) VALUES (ST_GeomFromText('POINT(17.5349051315434 60.1754333770934)', 4326));", function(err, result){
+        client.query(q2, function(err, result){
+            done();
+            if(err){
                 done();
-                if(err) return res.send(err);
-                res.redirect('/');
-            });
+                return res.status(500).json({success: false, data: err, x: x, y: y, q: q, q2: q2});
+            }
+            //if(err) return res.send(err);
+            res.redirect('/');
+        });
         //[req.body.name]
     });
 });
-
 
 module.exports = router;
