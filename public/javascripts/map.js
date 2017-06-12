@@ -111,8 +111,10 @@ function init(){
         }
     });
     var pointsSource = new ol.source.Vector({
-        strategy: ol.loadingstrategy.bbox,
-        loader: function(extent, resolution, projection) {
+        //strategy: ol.loadingstrategy.bbox,
+        strategy: ol.loadingstrategy.all,
+        // loader takes extent, resolution, projection
+        loader: function() {
             $.ajax('/points').then(function(response) {
                 var features = response.features;
                 features.forEach(function(feature){
@@ -124,6 +126,11 @@ function init(){
                         pointsSource.addFeature(tmp);
                     }
                 });
+                var sf = ol.coordinate.createStringXY(3);
+                features.reverse().forEach(function(feature){
+                    createRSSMedia(feature.properties.id, sf(feature.geometry.coordinates));
+                });
+                    //createRSSMedia('1', '11.11 22.22');
             });
         }
     });
@@ -155,7 +162,7 @@ function init(){
                 iconName: 'signal'
             }),
             new ol.layer.Vector({
-                visible: false,
+                visible: true,
                 source: pointsSource,
                 style: new ol.style.Style({
                     image: new ol.style.Circle({
@@ -232,7 +239,41 @@ function init(){
         }
     }));
     map.addOverlay(selectOverlay);
+    var feed = document.getElementById('feed');
+    var feedPanel = document.createElement('div');
+    feedPanel.className = 'panel-body';
+    feedPanel.setAttribute('style', 'overflow:scroll; !important')
+    feed.append(feedPanel);
     //////////////////////// FUNCTIONS ////////////////////////////////
+    function createRSSMedia(id, coords){
+        //var feed = document.getElementById('feed');
+        //var feedPanel = document.createElement('div');
+        //feedPanel.className = 'panel-body';
+        //feed.append(feedPanel);
+        //console.log(pointsSource);
+        var media = document.createElement('div');
+        media.className = 'media';
+        feedPanel.append(media);
+        var mediaLeft = document.createElement('div');
+        mediaLeft.className = 'media-left';
+        media.append(mediaLeft);
+        var mediaBody = document.createElement('div');
+        mediaBody.className = 'media-body';
+        media.append(mediaBody);
+        var mediaIMG = document.createElement('img');
+        mediaIMG.className = 'media-object';
+        mediaIMG.setAttribute('style', 'width:60px;');
+        mediaIMG.setAttribute('src', 'images/thumbnail/rb0.jpg');
+        mediaLeft.append(mediaIMG);
+        var mediaBodyHeading = document.createElement('h4');
+        mediaBodyHeading.className = 'media-heading';
+        mediaBodyHeading.innerHTML = id;
+        var mediaBodyContent = document.createElement('p');
+        mediaBodyContent.innerHTML = coords;
+        mediaBody.append(mediaBodyHeading);
+        mediaBody.append(mediaBodyContent);
+    }
+
     function pantopoint(){
         view.animate({
             center: geolocation.getPosition(),
@@ -288,7 +329,13 @@ function init(){
     $('#popup-submit-camera').on('click', function(){
         $('#camera_modal').modal('show');
     });
-    selectSingleButton.addEventListener('click', function(){
+    document.getElementById('urval_modal_denied').addEventListener('click', function(){
+        $('#meny').collapse('hide');
+    });
+    document.getElementById('urval_modal_close').addEventListener('click', function(){
+        $('#meny').collapse('hide');
+    });
+    document.getElementById('urval_modal_accept').addEventListener('click', function(){
         if(select != null){
             map.removeInteraction(select);
         }
@@ -300,7 +347,7 @@ function init(){
             var f = evt.selected[0];
             var c = f.getGeometry().getCoordinates();
             var t = ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
-            var sf = ol.coordinate.createStringXY(2);
+            var sf = ol.coordinate.createStringXY(3);
             var id = f.get('id');
             //console.log(f.getProperties());
             selectOverlay.setPosition(c);
@@ -310,21 +357,23 @@ function init(){
     selectCloser.addEventListener('click', function(){
         closeSelect();
     });
-
     submitCloser.addEventListener('click', function(){
         closeSubmit();
     });
     submitCancel.addEventListener('click', function(){
         closeSubmit();
     });
-    document.getElementById('Report').addEventListener('click', function(){
+    document.getElementById('report_modal_accept').addEventListener('click', function(){
         map.addInteraction(draw);
+        $('#meny').collapse('hide');
+    });
+    document.getElementById('Report').addEventListener('click', function(){
+        //map.addInteraction(draw);
         $('#meny').collapse('hide');
     });
     draw.on('drawend', function(evt){
         var c = evt.feature.getGeometry().getCoordinates();
         var t = ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
-        var sf = ol.coordinate.createStringXY(2);
         var db_format = ol.coordinate.createStringXY(13);
         var f = db_format(t);
         //submitPosition.value = sf(t);

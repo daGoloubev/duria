@@ -2,9 +2,14 @@ mixin feed
     .panel-heading
         h4.panel-title
             a(data-toggle='collapse', href='#feed')
-                i(class='fa fa-rss fa-lg', aria-hidden='true')|&nbsp; Senast rapport
+                i(class='fa fa-rss fa-lg', aria-hidden='true')|&nbsp; Flöde &nbsp;&nbsp;
             span.pull-right.slide-submenu
                 i(class='fa fa-arrow-right', aria-hidden='true')
     #feed(class='panel-collapse collapse in')
-        .panel-body
-            p test
+        //-.panel-body
+            .media
+               .media-left
+                   img(class="media-object", src="images/thumbnail/rb0.jpg", style="width:60px")
+               .media-body
+                   h4.media-heading id: 12
+                   p 123.213 432.4324

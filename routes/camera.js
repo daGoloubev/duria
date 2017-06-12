@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-    res.render('camera');
+    res.render('camera_view');
 });
 
 module.exports = router;

@@ -42,7 +42,10 @@ $(function(){
     // init
     // close layers.
     $(".sidebar-left .sidebar-body").toggle();
+    $(".sidebar-right .sidebar-body").toggle();
     $('.mini-submenu-left').toggle();
+    $('.mini-submenu-right').toggle();
+
     applyMargins();
     // close meny
 
@@ -55,15 +58,6 @@ $(function(){
             applyMargins();
         });
     });
-    /** Close menu */
-    $('.mini-submenu-left').on('click',function() {
-        var thisEl = $(this);
-        $('.sidebar-left .sidebar-body').toggle('slide');
-        thisEl.hide();
-        applyMargins();
-    });
-
-    /**
     $('.sidebar-right .slide-submenu').on('click',function() {
         var thisEl = $(this);
         thisEl.closest('.sidebar-body').fadeOut('slide',function(){
@@ -71,13 +65,20 @@ $(function(){
             applyMargins();
         });
     });
+    /** Close menu */
+    $('.mini-submenu-left').on('click',function() {
+        var thisEl = $(this);
+        $('.sidebar-left .sidebar-body').toggle('slide');
+        thisEl.hide();
+        applyMargins();
+    });
     $('.mini-submenu-right').on('click',function() {
         var thisEl = $(this);
         $('.sidebar-right .sidebar-body').toggle('slide');
         thisEl.hide();
         applyMargins();
     });
-    */
+
     $(window).on("resize", applyMargins);
     /** var map = new ol.Map({
         target: "map",
