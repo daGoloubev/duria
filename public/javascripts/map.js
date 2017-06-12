@@ -242,15 +242,9 @@ function init(){
     var feed = document.getElementById('feed');
     var feedPanel = document.createElement('div');
     feedPanel.className = 'panel-body';
-    feedPanel.setAttribute('style', 'overflow:scroll; !important')
     feed.append(feedPanel);
     //////////////////////// FUNCTIONS ////////////////////////////////
     function createRSSMedia(id, coords){
-        //var feed = document.getElementById('feed');
-        //var feedPanel = document.createElement('div');
-        //feedPanel.className = 'panel-body';
-        //feed.append(feedPanel);
-        //console.log(pointsSource);
         var media = document.createElement('div');
         media.className = 'media';
         feedPanel.append(media);
@@ -277,7 +271,7 @@ function init(){
     function pantopoint(){
         view.animate({
             center: geolocation.getPosition(),
-            zoom: 16,
+            zoom: 19,
             duration: 2000
         });
     }
@@ -387,10 +381,11 @@ function init(){
         geolocation.setTracking(true);
         setTimeout(function(){
             if(geolocation.getAccuracy() < 100){
-                console.log(geolocation.getAccuracy())
+                //console.log(geolocation.getAccuracy())
                 pantopoint();
             } else {
-                console.log(geolocation.getAccuracy());
+                tree.showErrorMsg('Nogrannheten överskred 100m.');
+                //console.log(geolocation.getAccuracy());
             }
         }, 1000);
     });
