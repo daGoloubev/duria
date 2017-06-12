@@ -7,9 +7,7 @@ var conString = 'postgres://CoolTrane:@192.168.1.3/CoolTrane'
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', {
-    title: 'Duria.se'
-  });
+  res.render('index');
 });
 /* GET pg json data. */
 router.get('/points', function (req, res) {

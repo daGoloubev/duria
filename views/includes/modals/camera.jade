@@ -1,0 +1,13 @@
+mixin camera(modal_id, modal_title)
+    .modal.fade(role='dialog', id='#{modal_id}', aria-hidden="true")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button',data-dismiss='modal', id='#{modal_id}_close') &times;
+                    h4.modal-title
+                        | #{modal_title}
+                    .modal-body
+                        #sketch-holder2
+                    .modal-footer
+                        button.btn.btn-success(type='button',data-dismiss='modal', id='#{modal_id}_accept')| Fotografera
+                        button.btn.btn-danger(type='button',data-dismiss='modal', id='#{modal_id}_denied')| Avbryt

@@ -77,7 +77,6 @@ layerTree.prototype.showErrorMsg = function(txt){
     document.getElementById('em_model_body').innerHTML = txt;
     $('#em_model').modal('show');
 };
-///////////////// SANDBOX ////////////////////////////////
 function init(){
     document.removeEventListener('DOMContentLoaded', init);
     ////////////////////////// VARIABLES ///////////////////////////////////
@@ -101,6 +100,8 @@ function init(){
             })
         })
     }));
+    var accuracyFeature = new ol.Feature();
+    accuracyFeature.setStyle();
     var geolocation = new ol.Geolocation({
         projection: view.getProjection(),
         options: {
@@ -117,6 +118,7 @@ function init(){
                 features.forEach(function(feature){
                     if(pointsSource.getFeatures().length < features.length){
                         var tmp = new ol.Feature({
+                            id: feature.properties.id,
                             geometry: new ol.geom.Point(ol.proj.transform(feature.geometry.coordinates, 'EPSG:4326', 'EPSG:3857'))
                         });
                         pointsSource.addFeature(tmp);
@@ -139,7 +141,7 @@ function init(){
                 iconName: 'plane'
             }),
             new ol.layer.Tile({
-                visible: false,
+                visible: true,
                 source: new ol.source.OSM(),
                 name: 'OpenStreetMap',
                 alias: 'Karta',
@@ -153,7 +155,7 @@ function init(){
                 iconName: 'signal'
             }),
             new ol.layer.Vector({
-                visible: true,
+                visible: false,
                 source: pointsSource,
                 style: new ol.style.Style({
                     image: new ol.style.Circle({
@@ -168,13 +170,16 @@ function init(){
             })
         ],
         controls: [
-            new ol.control.MousePosition({
-                coordinateFormat: function (coordinates) {
-                    var x = coordinates[0].toFixed(3);
-                    var y = coordinates[1].toFixed(3);
-                    return x + ' ' + y;
-                }// TARGET variant A eller variant B etc..
-            })
+            //new ol.control.MousePosition({
+           //    coordinateFormat: function (coordinates) {
+            //        //var x = coordinates[0].toFixed(3);
+            //        //var y = coordinates[1].toFixed(3);
+            //        //return x + ' ' + y;
+            //        var t = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+            //        var sf = ol.coordinate.createStringXY(2);
+            //        return sf(t);
+            //    }// TARGET variant A eller variant B etc..
+            //})
         ],
         view: view
     });
@@ -182,6 +187,12 @@ function init(){
     map.getLayers().forEach(function(l){
         if(l.get('name'))
             tree.createRegistry(l);
+    });
+    map.getLayers().forEach(function(l){
+        if(l.get('alias') === 'GPS'){
+            var s = l.getSource();
+            s.addFeature(accuracyFeature, positionFeature);
+        }
     });
     var drawSource = new ol.source.Vector({ wrapX: false });
     var drawVector = new ol.layer.Vector({ source: drawSource });
@@ -191,11 +202,9 @@ function init(){
         type: 'Point'
     });
     var submitContainer = document.getElementById('popup-submit');
-    var submitContent = document.getElementById('popup-content-submit');
     var submitCancel =  document.getElementById('popup-submit-cancel');
     var x_submitPosition =  document.getElementById('popup-submit-position-x');
     var y_submitPosition =  document.getElementById('popup-submit-position-y');
-    var submitButton = document.getElementById('popup-submit-submit');
     var submitCloser = document.getElementById('popup-closer-submit');
     var submitOverlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
         element: submitContainer,
@@ -205,12 +214,29 @@ function init(){
         }
     }));
     map.addOverlay(submitOverlay);
-
+    var select = null;
+    var selectSingleClick = new ol.interaction.Select({
+        layers: function(layer){
+            return layer.get('name') == 'Points';
+        }
+    });
+    var selectSingleButton = document.getElementById('single-select-button');
+    var selectContainer = document.getElementById('popup-select');
+    var selectContent = document.getElementById('popup-content-select');
+    var selectCloser  = document.getElementById('popup-closer-select');
+    var selectOverlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
+        element: selectContainer,
+        autoPan: true,
+        autoPanAnimation: {
+            duration: 250
+        }
+    }));
+    map.addOverlay(selectOverlay);
     //////////////////////// FUNCTIONS ////////////////////////////////
-    function pantopoint(geolocation){
+    function pantopoint(){
         view.animate({
             center: geolocation.getPosition(),
-            zoom: 12,
+            zoom: 16,
             duration: 2000
         });
     }
@@ -251,32 +277,46 @@ function init(){
         drawSource.clear(true);
         return false;
     }
-    function submitReport() {
-        var submitCoordinates = drawSource.getFeatures()[0].getGeometry().getCoordinates();
-        submitCoordinates = ol.proj.transform(submitCoordinates, 'EPSG:3857', 'EPSG:4326');
-        var db_format = ol.coordinate.createStringXY(13);
-        submitCoordinates = db_format(submitCoordinates);
-        //console.log(submitCoordinates)
-    $.ajax({
-        method: "POST",
-        url: "/add",
-        header: 'application/json',
-        data: { coordinates: submitCoordinates }
-    }).done(function( msg ) {
-            console.log( "Data Saved: " + msg);
-        });
+    function closeSelect(){
+        selectOverlay.setPosition(undefined);
+        selectCloser.blur;
+        select.getFeatures().clear();
+        return false;
     }
     /////////////////////// EVENTS ////////////////////////////////////
+   var cameraButton = document.getElementById('popup-submit');
+    $('#popup-submit-camera').on('click', function(){
+        $('#camera_modal').modal('show');
+    });
+    selectSingleButton.addEventListener('click', function(){
+        if(select != null){
+            map.removeInteraction(select);
+        }
+        select = selectSingleClick;
+        map.addInteraction(select);
+        $('#meny').collapse('hide');
+    });
+    selectSingleClick.on('select', function(evt){
+            var f = evt.selected[0];
+            var c = f.getGeometry().getCoordinates();
+            var t = ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
+            var sf = ol.coordinate.createStringXY(2);
+            var id = f.get('id');
+            //console.log(f.getProperties());
+            selectOverlay.setPosition(c);
+            var s = 'id: '+id+'<br> coordinates: '+sf(t);
+            selectContent.innerHTML = s;
+        });
+    selectCloser.addEventListener('click', function(){
+        closeSelect();
+    });
+
     submitCloser.addEventListener('click', function(){
         closeSubmit();
     });
     submitCancel.addEventListener('click', function(){
         closeSubmit();
     });
-    //submitButton.addEventListener('click', function(evt){
-    //    submitReport();
-    //    closeSubmit();
-    //});
     document.getElementById('Report').addEventListener('click', function(){
         map.addInteraction(draw);
         $('#meny').collapse('hide');
@@ -294,18 +334,26 @@ function init(){
         map.removeInteraction(draw);
     });
     document.getElementById('geolocation_modal_accept').addEventListener('click', function(){
-        geolocation.setTracking(true);
         $('#meny').collapse('hide');
+        geolocation.setTracking(true);
+        setTimeout(function(){
+            if(geolocation.getAccuracy() < 100){
+                console.log(geolocation.getAccuracy())
+                pantopoint();
+            } else {
+                console.log(geolocation.getAccuracy());
+            }
+        }, 1000);
     });
     document.getElementById('geolocation_modal_denied').addEventListener('click', function(){
+        $('#meny').collapse('hide');
         geolocation.setTracking(false);
         resetPropText();
-        $('#meny').collapse('hide');
     });
     document.getElementById('geolocation_modal_close').addEventListener('click', function(){
+        $('#meny').collapse('hide');
         geolocation.setTracking(false);
         resetPropText();
-        $('#meny').collapse('hide');
     });
     geolocation.on('change', function(){
        document.getElementById('accuracy').innerHTML = geolocation.getAccuracy() !== undefined ? 'Noggrannhet: '+geolocation.getAccuracy() + ' m': 'Noggrannhet: - m';
@@ -313,26 +361,17 @@ function init(){
        document.getElementById('altitudeAcc').innerHTML = geolocation.getAltitudeAccuracy() !== undefined ? 'Höjd över havet (Noggrannhet): '+geolocation.getAltitudeAccuracy() + ' m': 'Höjd över havet (Noggrannhet): - m';
        document.getElementById('heading').innerHTML = geolocation.getHeading() !== undefined ? 'Bäring: '+geolocation.getHeading() + ' rad': 'Bäring: - rad';
        document.getElementById('speed').innerHTML = geolocation.getSpeed() !== undefined ? 'Hastighet: '+geolocation.getSpeed() + ' m/s': 'Hastighet: - m/s';
-       if(geolocation.getPosition() !== undefined){
-           pantopoint(geolocation);
-       }
     });
     geolocation.on('error', function(error){
         tree.showErrorMsg(error.message);
     });
-    var accuracyFeature = new ol.Feature();
     geolocation.on('change:accuracyGeometry', function() {
         accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
     });
     geolocation.on('change:position', function() {
         var coordinates = new ol.geom.Point(ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326'));
         positionFeature.setGeometry(coordinates ? coordinates : null);
-    })
-    map.getLayers().forEach(function(l){
-        if(l.get('alias') === 'GPS'){
-            var s = l.getSource();
-            s.addFeature(accuracyFeature, positionFeature);
-        }
+
     });
     $('.Geolocation_checkbox').on('change', function(){
         if(this.checked){
@@ -341,7 +380,6 @@ function init(){
             } else {
                 // pantopoint(geolocation);
                 // adjustZoom();
-
             }
         }
     });
