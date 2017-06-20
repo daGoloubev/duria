@@ -1,8 +1,11 @@
-var w = 320;
-var h = 240
+var video;
+var button;
+var saveButton;
+var canvas;
 function setup() {
-    var canvas = createCanvas(w, h);
-    capture = createCapture({
+    canvas = createCanvas(320, 240);
+    background(255);
+    video = createCapture(VIDEO,{
         audio: false,
         video: {
             facingMode: {
@@ -10,14 +13,20 @@ function setup() {
             }
         }
     });
-    capture.size(w, h);
-    capture.hide();
-    canvas.parent('sketch-holder2');
-    background(255, 0, 200);
+    video.size(320,240);
+    var button = createButton('Ta en snap');
+    var saveButton = createButton('Ladda ner foto');
+    button.mousePressed(takesnap);
+    saveButton.mousePressed(savesnap);
+    canvas.parent('sketch-holder');
+    video.parent('sketch-holder');
+    button.parent('sketch-holder');
+    saveButton.parent('sketch-holder');
+}
+function takesnap(){
+    image(video, 0, 0);
+}
+function savesnap(){
+    save(canvas, '/images/tmp/duria.se_minSnap.jpg');
 }
 
-function draw() {
-    background(255);
-    image(capture, 0, 0, w, h);
-    //filter('INVERT');
-}

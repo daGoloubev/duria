@@ -121,7 +121,8 @@ function init(){
                     if(pointsSource.getFeatures().length < features.length){
                         var tmp = new ol.Feature({
                             id: feature.properties.id,
-                            geometry: new ol.geom.Point(ol.proj.transform(feature.geometry.coordinates, 'EPSG:4326', 'EPSG:3857'))
+                            geometry: new ol.geom.Point(ol.proj.transform(feature.geometry.coordinates, 'EPSG:4326', 'EPSG:3857')),
+                            img: feature.properties.img64
                         });
                         pointsSource.addFeature(tmp);
                     }
@@ -346,7 +347,10 @@ function init(){
             //console.log(f.getProperties());
             selectOverlay.setPosition(c);
             var s = 'id: '+id+'<br> coordinates: '+sf(t);
-            selectContent.innerHTML = s;
+            //selectContent.innerHTML = s;
+            var img_src = f.get('img');
+            var img_el = $('#popup-content-select img');
+            img_el.attr('src', img_src);
         });
     selectCloser.addEventListener('click', function(){
         closeSelect();
@@ -426,6 +430,12 @@ function init(){
                 // adjustZoom();
             }
         }
+    });
+    $('#camera_modal_accept').on('click', function(){
+        var canvas = document.getElementById('defaultCanvas0');
+        var url = canvas.toDataURL();
+        var input = $('#popup-submit-img-base64');
+        input.val(url);
     });
 }
 document.addEventListener('DOMContentLoaded', init);

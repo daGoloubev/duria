@@ -8,5 +8,7 @@
     <orderEntry type="library" name="OpenLayers" level="application" />
     <orderEntry type="library" name="jQuery" level="application" />
     <orderEntry type="library" name="Bootstrap" level="application" />
+    <orderEntry type="library" name="p5.dom" level="application" />
+    <orderEntry type="library" name="p5" level="application" />
   </component>
 </module>
