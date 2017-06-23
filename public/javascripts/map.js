@@ -129,7 +129,7 @@ function init(){
                 });
                 var sf = ol.coordinate.createStringXY(3);
                 features.reverse().forEach(function(feature){
-                    createRSSMedia(feature.properties.id, sf(feature.geometry.coordinates));
+                    createRSSMedia(feature.properties.id, sf(feature.geometry.coordinates), feature.properties.img64);
                 });
                     //createRSSMedia('1', '11.11 22.22');
             });
@@ -173,7 +173,7 @@ function init(){
                     })
                 }),
                 name: 'Points',
-                alias: 'Väghinder',
+                alias: 'Vägbommar',
                 iconName: 'exclamation-triangle'
             })
         ],
@@ -245,7 +245,7 @@ function init(){
     feedPanel.className = 'panel-body';
     feed.append(feedPanel);
     //////////////////////// FUNCTIONS ////////////////////////////////
-    function createRSSMedia(id, coords){
+    function createRSSMedia(id, coords, img){
         var media = document.createElement('div');
         media.className = 'media';
         feedPanel.append(media);
@@ -258,7 +258,8 @@ function init(){
         var mediaIMG = document.createElement('img');
         mediaIMG.className = 'media-object';
         mediaIMG.setAttribute('style', 'width:60px;');
-        mediaIMG.setAttribute('src', 'images/thumbnail/rb0.jpg');
+        console.log(img);
+        mediaIMG.setAttribute('src', img);
         mediaLeft.append(mediaIMG);
         var mediaBodyHeading = document.createElement('h4');
         mediaBodyHeading.className = 'media-heading';
@@ -384,11 +385,11 @@ function init(){
         $('#meny').collapse('hide');
         geolocation.setTracking(true);
         setTimeout(function(){
-            if(geolocation.getAccuracy() < 100){
+            if(geolocation.getAccuracy() < 30){
                 //console.log(geolocation.getAccuracy())
                 pantopoint();
             } else {
-                tree.showErrorMsg('Nogrannheten överskred 100m.');
+                tree.showErrorMsg('Nogrannheten överskred 30m.');
                 //console.log(geolocation.getAccuracy());
             }
         }, 1000);
