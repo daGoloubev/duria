@@ -28,23 +28,53 @@ block content
         i(class='fa fa-rss')
     #popup-submit.ol-popup
         a(href='#', id='popup-closer-submit', class='ol-popup-closer')
-        form(method='POST', action='/report')
-            .form-group.coords-to-db
-                // Collapsible?
-                label| Latitude
-                input(id='popup-submit-position-x', class='form-control', name='x_coordinates')
-                label| Latitude
-                input(id='popup-submit-position-y', class='form-control', name='y_coordinates')
-             .form-grou.img-to-db
-                 label| images as base64
-                 input(id='popup-submit-img-base64', class='form-control', name='img_baseg64')
+        form(method='POST', action='/report', onsubmit='return validateForm()', name='myForm')
+            //- Ej synliga för användaren
+            .form-group.hidden-to-db
+                .form-group.coords-to-db
+                    label| X
+                    input(id='popup-submit-position-x', class='form-control', name='x_coordinates')
+                    label| Y
+                    input(id='popup-submit-position-y', class='form-control', name='y_coordinates')
+                .form-group.date-to-db
+                     label| Datum
+                     input(id='popup-submit-date', class='form-control', name='date')
+                .form-group.time-to-db
+                    label| Tid
+                    input(id='popup-submit-time', class='form-control', name='time')
+                .form-group.accuracy-to-db
+                    label| Min accuracy
+                    input(id='popup-submit-my-position-accuracy', class='form-control', name='my_accuracy')
+                .form-group.img-to-db
+                     label| images as base64
+                     input(id='popup-submit-img-base64', class='form-control', name='img_baseg64')
+                //- Synliga för användaren
             .form-group
-                button(type='button', data-toggle='modal', data-target='#camera_modal', id='popup-submit-camera', class='form-control btn btn-default')| Lägg till Foto
-                //- a(href='', data-toggle='modal', data-target='#camera_modal', id='camera-button', class='form-control btn btn-default')
-                    i(class='fa fa-camera fa-lg', aria-hidden='true')|&nbsp; Kamera
+                label(for='status_select')| Aktuell status för vägbom
+                //.radio
+                    label
+                        input(type="radio", name="saknas")
+                        | Vägbommen finns i verkligheten men saknas i kartan.
+                //.radio
+                    label
+                        input(type="radio", name="finns")
+                        | Vägbommen finns i verkligheten och i kartan.
+
+                select(id='status_select', class='', name='status')
+                    optgroup(label='default')
+                        option()
+                    optgroup(label='Inventering')
+                        option(value='Finns') Vägbommens position stämmer överens med kartan.
+                    optgroup(label='Nya Uppdrag')
+                        option(value='Saknas') Vägbommens position saknas i kartan.
             .form-group
-                input(type='submit', id='popup-submit-submit',class='form-control btn btn-default', value='Rapportera')
-                button(type='button',id='popup-submit-cancel' ,class='form-control btn btn-default', value='')| Avbryt
+                input(type='submit', id='popup-submit-submit',class='form-control btn btn-success', value='Rapportera')
+                //- TODO:: Rest all input values
+                br
+                button(type='button',id='popup-submit-cancel' ,class='form-control btn btn-warning', value='')| Avbryt
+            .form-group
+                button(type='button', data-toggle='modal', data-target='#camera_modal', id='popup-submit-camera', class='form-control btn btn-info')| Lägg till Foto (frivilligt)
+
     #popup-select.ol-popup
         a(href='#', id='popup-closer-select', class='ol-popup-closer')
         #popup-content-select
@@ -54,3 +84,5 @@ block content
     +info_modal('urval_modal', 'Urval', 'Du kommer nu få möjligheten att hämta information om redan inrapporterade väghinder genom att klicka på dessa i kartan.')
     +em
     +camera('camera_modal', 'Kamera')
+    +info_modal('status_modal', 'Aktuell status för vägbom saknas', 'Välj lämpligt alternativ.')
+

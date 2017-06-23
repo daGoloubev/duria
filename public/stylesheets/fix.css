@@ -7,11 +7,17 @@ div.panel-body.list-group {
 label.list-group-item.checkbox-inline:first-child {
     border-top: 0px;
 }
-.coords-to-db {
-    display: none;
+.hidden-to-db {
+    /* display: none; */
 }
-
 #sketch-holder{
     width: 320px;
     margin: 0 auto;
+}
+#sketch-holder button{
+    padding-left: 115px;
+    padding-right: 115px;
+}
+#popup-submit-submit{
+    margin-bottom: 4px;
 }

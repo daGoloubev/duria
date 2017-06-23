@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/duria.iml" filepath="$PROJECT_DIR$/.idea/duria.iml" />
+      <module fileurl="file://$PROJECT_DIR$/duria.iml" filepath="$PROJECT_DIR$/duria.iml" />
     </modules>
   </component>
 </project>

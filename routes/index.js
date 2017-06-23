@@ -28,6 +28,9 @@ router.get('/points', function (req, res) {
             res.send(result.rows[0].row_to_json);
             res.end();
         });
+        query.on("error", function(results){
+           res.end();
+        });
 });
 // Add data
 router.post('/report', function(req, res, next) {

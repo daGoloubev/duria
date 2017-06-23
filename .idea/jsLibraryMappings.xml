@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$" libraries="{duria.se/node_modules, p5, p5.dom}" />
-    <file url="PROJECT" libraries="{Bootstrap, OpenLayers, duria.se/node_modules, jQuery}" />
+    <file url="PROJECT" libraries="{Bootstrap, OpenLayers, jQuery, p5}" />
   </component>
 </project>

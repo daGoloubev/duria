@@ -80,6 +80,9 @@ layerTree.prototype.showErrorMsg = function(txt){
 function init(){
     document.removeEventListener('DOMContentLoaded', init);
     ////////////////////////// VARIABLES ///////////////////////////////////
+    var date= new Date();
+    var date_string = String(date.getFullYear())+'-'+String(date.getMonth())+'-'+String(date.getDate());
+
     var view = new ol.View({
         center: [1908533.467, 8551296.993],
         zoom: 13,
@@ -213,6 +216,10 @@ function init(){
     var submitCancel =  document.getElementById('popup-submit-cancel');
     var x_submitPosition =  document.getElementById('popup-submit-position-x');
     var y_submitPosition =  document.getElementById('popup-submit-position-y');
+    var submitdate = document.getElementById('popup-submit-date');
+    var submittime = document.getElementById('popup-submit-time');
+    var submitAcc = document.getElementById('popup-submit-my-position-accuracy');
+
     var submitCloser = document.getElementById('popup-closer-submit');
     var submitOverlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
         element: submitContainer,
@@ -245,6 +252,13 @@ function init(){
     feedPanel.className = 'panel-body';
     feed.append(feedPanel);
     //////////////////////// FUNCTIONS ////////////////////////////////
+    function validateForm(){
+        var status = document.forms["submit_form"]["status_select"].value;
+        if(x === ''){
+            alert('Status måste vara ifylld');
+            return false;
+        }
+    }
     function createRSSMedia(id, coords, img){
         var media = document.createElement('div');
         media.className = 'media';
@@ -258,7 +272,6 @@ function init(){
         var mediaIMG = document.createElement('img');
         mediaIMG.className = 'media-object';
         mediaIMG.setAttribute('style', 'width:60px;');
-        console.log(img);
         mediaIMG.setAttribute('src', img);
         mediaLeft.append(mediaIMG);
         var mediaBodyHeading = document.createElement('h4');
@@ -378,8 +391,28 @@ function init(){
         //submitPosition.value = sf(t);
         x_submitPosition.value = f.split(',')[0];
         y_submitPosition.value = f.split(',')[1];
+        submitdate.value = date_string;
+        date = new Date();
+        submittime.value = String(date.getHours()) + ':'+String(date.getMinutes())+':'+String(date.getSeconds());
+        submitAcc.value = geolocation.getAccuracy() !== undefined ? String(geolocation.getAccuracy())+' m': '';
         submitOverlay.setPosition(c);
         map.removeInteraction(draw);
+        // empty Canvas.
+        canvas.clear();
+        // Style button
+        var sketchDiv = document.getElementById('sketch-holder');
+        var snapButton = sketchDiv.getElementsByTagName('Button')[0];
+        snapButton.setAttribute('class', 'btn btn-info snapButton');
+        /**
+         * Disallow empty pictures.
+         */
+        $('#camera_modal_accept').prop('disabled', true);
+        /**
+         * Enable after first-snap.
+         */
+        $('.snapButton').one('click', function(){
+            $('#camera_modal_accept').prop('disabled', false);
+        });
     });
     document.getElementById('geolocation_modal_accept').addEventListener('click', function(){
         $('#meny').collapse('hide');
@@ -432,11 +465,25 @@ function init(){
             }
         }
     });
+
+    /**
+     * EventHandling for Camera modal
+     * Saving snap as base64 dataURL.
+    */
     $('#camera_modal_accept').on('click', function(){
         var canvas = document.getElementById('defaultCanvas0');
         var url = canvas.toDataURL();
         var input = $('#popup-submit-img-base64');
         input.val(url);
     });
+    /**
+     * EventHandling for Camera modal
+     * Empty the input
+     */
+    $('#camera_modal_denied').on('click', function(){
+        var input = $('#popup-submit-img-base64').val('');
+    });
+
 }
 document.addEventListener('DOMContentLoaded', init);
+
