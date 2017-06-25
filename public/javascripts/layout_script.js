@@ -49,7 +49,6 @@ $(function(){
     applyMargins();
     // close meny
 
-
     /** Open after close */
     $('.sidebar-left .slide-submenu').on('click',function() {
         var thisEl = $(this);

@@ -54,9 +54,9 @@ block content
                 select(id='status_select', class='', name='status')
                     optgroup(label='default')
                         option(value="")
-                    optgroup(label='Inventering')
+                    optgroup(label='Saknas i fält')
                         option(value='Finns', name='status') Vägbommens position stämmer överens med kartan.
-                    optgroup(label='Nya Uppdrag')
+                    optgroup(label='Finns i fält')
                         option(value='Saknas', name='status') Vägbommens position saknas i kartan.
             .form-group
                 input(type='submit', id='popup-submit-submit',class='form-control btn btn-success', value='Rapportera')
@@ -84,10 +84,119 @@ block content
                       tr
                         th Status
                         td#popup-content-select-status
-    +info_modal('geolocation_modal', 'Geolocation', 'Applikationen kommer nu att använda oss av er inbyggda GPS sensor för att ta reda på er position och förflytta er till den delen av kartan.')
-    +info_modal('report_modal', 'Rapportera', 'Du kommer nu aktivera funktionen att rapportera in väghinder genom att klicka i kartan.')
-    +info_modal('urval_modal', 'Urval', 'Du kommer nu få möjligheten att hämta information om redan inrapporterade väghinder genom att klicka på dessa i kartan.')
     +em
     +camera('camera_modal', 'Kamera')
     +info_modal('status_modal', 'Aktuell status för vägbom saknas', 'Välj lämpligt alternativ.')
 
+    //- +info_modal('geolocation_modal', 'Geolocation', 'Applikationen kommer nu att använda oss av er inbyggda GPS sensor för att ta reda på er position och förflytta er till den delen av kartan.')
+    .modal.fade(role='dialog', id='geolocation_modal')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button',data-dismiss='modal', id='geolocation_modal_close') &times;
+                    h2.modal-title
+                        | &nbsp; Min Position
+                    .modal-body
+                        p Applikationen kommer nu att försöka hämta din position m.h.a GPS (Global Positiong System).
+                        p Varje GPS mätning skapar en parameter som heter noggrannhet.
+                        p Noggrannheten används för att representera GPS signalen i applikationen som en blå cirkel.
+                        .media
+                            .media-left
+                                img(style="width: 128px;", class="media-object", src="images/info/layer_handler.png")
+                            .media-body
+                                h4.media-heading Lagerhanteraren
+                                p Det går att stänga av GPS symbolen via lagerhanteraren som finns i kartan.
+                                p Du kan också se din aktuella noggrannhet via lagerhanteraren och undermenyn GPS Egenskaper.
+                        hr
+                        .media
+                            .media-left
+                                img(style="width: 126px;", class="media-object", src="images/info/GPS_high.png")
+                            .media-body
+                                h4.media-heading Hög noggranhet
+                                p Det finns ett antal orsaker till att GPS noggranheten är hög.
+                                p Exempelvis:
+                                    ul
+                                        li Din position är inomhus eller under ett tak.
+                                        li Din position är nära ett föremål exemplivis träd, höga byggnader som blockerar GPS signalen
+                                        li Oftast beror hög noggranhet på att positionen befinner sig vid en stationär enhet.
+                                        li Noggrannheten kan också manipuleras av en VPN (Virtual Private Network) tjänst
+                                        li Din ISP (Internet Service Provider) dvs. internetleverantör kan också förvränga GPS noggrannheten.
+                        .media
+                            .media-left
+                                img(style="width: 126px;", class="media-object", src="images/info/GPS_low.png")
+                            .media-body
+                                h4.media-heading Låg noggranhet
+                                p Om noggrannehten är låg så kan du följa din position i kartan om du förflyttar dig exempelvis.
+                    .modal-footer
+                        button.btn.btn-success(type='button',data-dismiss='modal', id='geolocation_modal_accept')| Acceptera
+                        button.btn.btn-danger(type='button',data-dismiss='modal', id='geolocation_modal_denied')| Avbryt
+
+    //- +info_modal('urval_modal', 'Urval', 'Du kommer nu få möjligheten att hämta information om redan inrapporterade vägbommar genom att klicka på dessa i kartan.')
+    .modal.fade(role='dialog', id='urval_modal')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button',data-dismiss='modal', id='urval_modal_close') &times;
+                    h2.modal-title
+                        | &nbsp; Urval
+                    .modal-body
+                        p Du kommer nu att aktivera urvalsfunktionen vilket tillåter dig att hämta information om en vägbom genom att klicka dess ikon i kartan.
+                        p Det går endast att klicka på en vägbom i taget.
+                        p Efter ett framgångsrikt klick bekräftas urvalet genom att en popup ruta öppnas med information om aktuell vägbom.
+                        hr
+                        h4 Symboler
+                        .media
+                            .media-left
+                                img(style="width: 64px; height: 64px", class="media-object", src="images/roadblocks/Finns.png")
+                            .media-body
+                                h4.media-heading Vägbom finns
+                                p Denna ikon betyder att en vägbom finns i kartan men saknas i fält.
+                        .media
+                            .media-left
+                                img(style="width: 64px; height: 64px", class="media-object", src="images/roadblocks/Saknas.png")
+                            .media-body
+                                h4.media-heading Vägbom saknas
+                                p Denna ikon betyder att en vägbom finns i fält men saknas i kartan.
+                        .media
+                            .media-left
+                                img(style="width: 64px; height: 64px", class="media-object", src="images/info/rss_handler.png")
+                            .media-body
+                                h4.media-heading Senast inrapporterade
+                                p När du klickar på denna ikon i kartan så öppnas det upp en historik.
+                                p I den kan du se senast inrapporterade.
+                                p Om du vill navigera till den positionen klicka då på ikonen eller bilden bredvid positions informationen.
+                    .modal-footer
+                        button.btn.btn-success(type='button',data-dismiss='modal', id='urval_modal_accept')| Acceptera
+                        button.btn.btn-danger(type='button',data-dismiss='modal', id='urval_modal_denied')| Avbryt
+    //- +info_modal('report_modal', 'Rapportera', 'Du kommer nu aktivera funktionen att rapportera in vägbommar genom att klicka i kartan.')
+    .modal.fade(role='dialog', id='report_modal')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button',data-dismiss='modal', id='report_modal_close') &times;
+                    h2.modal-title
+                       | &nbsp; Rapportera
+                    .modal-body
+                        p Du kommer nu aktivera funktionen för att rapportera in information om en vägbom.
+                        p När du gör en rapportering så måste du ange vägbommens status.
+                        p Det finns två olika definitioner för status.
+                        h4 Status: Finns
+                        p Vägbom finns i kartan men saknas i fält.
+                        h4 Status: Saknas
+                        p Vägbom saknas i kartan men finns i fält.
+                        p Du har även möjligheten att ta en bild på platsen och skicka med din rapport (detta är dock helt frivilligt).
+                        hr
+                        h3 Vad är en vägbom?
+                        p Nedan följer en detaljerad specifikation.
+                        hr
+                        h3 Vägbom
+                        h4 Definition
+                        p Permanent konstruktion som används för att avstänga väg för obehörig trafik.
+                        h4 Beskrivning
+                        p Mittpunkt för permanent avstängning av enskild väg som kan bestå av vägbom, kedja, wire (låsta eller tillfälligt öppna).
+                        h4 Urval
+                        p Redovisas fullständingt för bilväg och sämre väg.
+                        p Undantag för väg kortare än 250 m, uppfartsvägar och vägar inom bebyggelseområde.
+                    .modal-footer
+                        button.btn.btn-success(type='button',data-dismiss='modal', id='report_modal_accept')| Acceptera
+                        button.btn.btn-danger(type='button',data-dismiss='modal', id='report_modal_denied')| Avbryt

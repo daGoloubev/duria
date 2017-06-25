@@ -171,16 +171,34 @@ function init(){
                     imagerySet: 'Aerial'
                 }),
                 name: 'BingMapsAerial',
-                alias: 'Flygbilder',
+                alias: 'Flygbilder BING',
                 iconName: 'plane'
             }),
             new ol.layer.Tile({
-                visible: true,
+                visible: false,
                 source: new ol.source.OSM(),
                 name: 'OpenStreetMap',
-                alias: 'Karta',
+                alias: 'OSM',
                 iconName: 'globe'
             }),
+            //new ol.layer.Tile({
+            //    visible: true,
+            //    source: new ol.source.TileWMS({
+            //        url: 'http://192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:orto025&srs=EPSG:4326'
+            //    }),
+            //    name: 'TopoMap',
+            //    alias: 'Ortofoto',
+            //    iconName: 'globe'
+            //}),
+            //new ol.layer.Tile({
+            //    visible: true,
+            //    source: new ol.source.TileWMS({
+            //        url: 'http://192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:topowebbkartan&srs=EPSG:4326'
+            //    }),
+            //    name: 'TopoMap',
+            //    alias: 'Topografisk webbkarta',
+            //    iconName: 'globe'
+            //}),
             new ol.layer.Vector({
                 visible: true,
                 source: new ol.source.Vector({}),
@@ -191,13 +209,36 @@ function init(){
             new ol.layer.Vector({
                 visible: true,
                 source: pointsSource,
-                style: new ol.style.Style({
-                    image: new ol.style.Circle({
-                        radius: 10,
-                        fill: new ol.style.Fill({color: 'rgba(254,165,83,1)'}),
-                        stroke: new ol.style.Stroke({color: 'rgba(254,127,14,1)', width: 3})
-                    })
-                }),
+                style: function(f) {
+                    if (typeof f.get('status') === 'null' || !f.get('status')) {
+                        return new ol.style.Style({
+                            image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                                src: '/images/roadblocks/standard.png',
+                                scale: 0.25
+
+                            }))
+                        });
+                    } else {
+                        if(f.get('status') === 'Saknas'){
+                            return new ol.style.Style({
+                                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                                    src: '/images/roadblocks/saknas.png',
+                                    scale: 0.25
+
+                                }))
+                            });
+                        } else {
+                            return new ol.style.Style({
+                                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                                    src: '/images/roadblocks/finns.png',
+                                    scale: 0.25
+
+                                }))
+                            });
+                        }
+                    }
+                    return;
+                },
                 name: 'Points',
                 alias: 'Vägbommar',
                 iconName: 'exclamation-triangle'
@@ -205,20 +246,20 @@ function init(){
         ],
         controls: [
             //new ol.control.MousePosition({
-           //    coordinateFormat: function (coordinates) {
-            //        //var x = coordinates[0].toFixed(3);
-            //        //var y = coordinates[1].toFixed(3);
-            //        //return x + ' ' + y;
-            //        var t = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
-            //        var sf = ol.coordinate.createStringXY(2);
-            //        return sf(t);
+            //   coordinateFormat: function (coordinates) {
+            //        var x = coordinates[0].toFixed(3);
+            //        var y = coordinates[1].toFixed(3);
+            //        return x + ' ' + y;
+            //        //var t = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+            //        //var sf = ol.coordinate.createStringXY(2);
+            //        //return sf(t);
             //    }// TARGET variant A eller variant B etc..
             //})
         ],
         view: view
     });
     // var tree = ...
-    tree = new layerTree({map: map, target: 'layers'});
+    var tree = new layerTree({map: map, target: 'layers'});
     map.getLayers().forEach(function(l){
         if(l.get('name'))
             tree.createRegistry(l);
@@ -270,6 +311,8 @@ function init(){
         }
     }));
     map.addOverlay(selectOverlay);
+    map.addControl(new ol.control.Zoom());
+    map.addControl(new ol.control.Rotate());
     //////////////////////// FUNCTIONS ////////////////////////////////
     function fillMediaData(n){
         for(var i = 0; i < n; i++){
@@ -277,14 +320,12 @@ function init(){
         }
     }
     function setMediaData(p, f){
-        var id_src = '#'+p+'_media_post'
+        var id_src = '#'+p+'_media_post';
         var img_src = id_src+'_img';
         var lat_src = id_src+'_lat';
         var lng_src = id_src+'_lng';
         var acc_src = id_src+'_acc';
-
         var i = f.properties.img64;
-
         var lat = f.geometry.coordinates[0];
         var lng = f.geometry.coordinates[1];
         var a = f.properties.accuracy;
@@ -309,7 +350,6 @@ function init(){
             $(img_src).prop('src', i);
         }
     }
-
     function pantopoint(){
         view.animate({
             center: geolocation.getPosition(),
@@ -317,15 +357,11 @@ function init(){
             duration: 2000
         });
     }
-    // Göra om design?
     function resetPropText(){
         document.getElementById('accuracy').innerHTML = 'Noggrannhet: - m';
-        document.getElementById('altitude').innerHTML = 'Höjd över havet: - m';
-        document.getElementById('altitudeAcc').innerHTML = 'Höjd över havet (Noggrannhet): - m';
-        document.getElementById('heading').innerHTML = 'Bäring: - rad';
-        document.getElementById('speed').innerHTML = 'Hastighet: - m/s';
     }
     function adjustZoom(){
+
         if(needsZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == true && neeedsZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == false){
             //zooma in
             map.getView().setCenter(geolocation.getPosition());
@@ -365,12 +401,7 @@ function init(){
     $('#popup-submit-camera').on('click', function(){
         $('#camera_modal').modal('show');
     });
-    document.getElementById('urval_modal_denied').addEventListener('click', function(){
-        $('#meny').collapse('hide');
-    });
-    document.getElementById('urval_modal_close').addEventListener('click', function(){
-        $('#meny').collapse('hide');
-    });
+
     document.getElementById('urval_modal_accept').addEventListener('click', function(){
         if(select != null){
             map.removeInteraction(select);
@@ -453,9 +484,15 @@ function init(){
     document.getElementById('geolocation_modal_accept').addEventListener('click', function(){
         $('#meny').collapse('hide');
         geolocation.setTracking(true);
-        setTimeout(function(){
-            pantopoint();
-        }, 1000);
+        if(geolocation.getAccuracy() < 100){
+            setTimeout(function(){
+                pantopoint();
+            }, 1000);
+        } else {
+            // Anpassa kartan till acc. extent.
+            // Kill your darlings?
+            // adjustZoom();
+        }
     });
     document.getElementById('geolocation_modal_denied').addEventListener('click', function(){
         $('#meny').collapse('hide');
@@ -469,10 +506,6 @@ function init(){
     });
     geolocation.on('change', function(){
        document.getElementById('accuracy').innerHTML = geolocation.getAccuracy() !== undefined ? 'Noggrannhet: '+geolocation.getAccuracy() + ' m': 'Noggrannhet: - m';
-       document.getElementById('altitude').innerHTML = geolocation.getAltitude() !== undefined ? 'Höjd över havet: '+geolocation.getAltitude() + ' m': 'Höjd över havet: - m';
-       document.getElementById('altitudeAcc').innerHTML = geolocation.getAltitudeAccuracy() !== undefined ? 'Höjd över havet (Noggrannhet): '+geolocation.getAltitudeAccuracy() + ' m': 'Höjd över havet (Noggrannhet): - m';
-       document.getElementById('heading').innerHTML = geolocation.getHeading() !== undefined ? 'Bäring: '+geolocation.getHeading() + ' rad': 'Bäring: - rad';
-       document.getElementById('speed').innerHTML = geolocation.getSpeed() !== undefined ? 'Hastighet: '+geolocation.getSpeed() + ' m/s': 'Hastighet: - m/s';
     });
     geolocation.on('error', function(error){
         tree.showErrorMsg(error.message);
@@ -484,16 +517,6 @@ function init(){
         var coordinates = new ol.geom.Point(ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326'));
         positionFeature.setGeometry(coordinates ? coordinates : null);
 
-    });
-    $('.Geolocation_checkbox').on('change', function(){
-        if(this.checked){
-            if(geolocation.getPosition() === undefined){
-                tree.showErrorMsg('Aktivera din position genom att klicka på Min positionen i menyn.');
-            } else {
-                // pantopoint(geolocation);
-                // adjustZoom();
-            }
-        }
     });
 
     /**
@@ -524,7 +547,7 @@ function init(){
             $('#current_page').text(String(t));
             if (start_page !== media_book.length){
                 for(var i = 0 ; i < 5; i++){
-                    if($(String('#'+i)+'_media_post').css('display') == 'none') {
+                    if($(String('#'+i)+'_media_post').css('display') === 'none') {
                         $(String('#'+i)+'_media_post').css('display', 'block');
                     }
                 }
@@ -539,7 +562,7 @@ function init(){
             $('#current_page').text(String(t));
             if (start_page !== media_book.length){
                 //om längden är 5
-                if(media_book.length == 5){
+                if(media_book.length === 5){
                     // fyll på 5
                     fillMediaData(5);
                 } else {
@@ -561,10 +584,17 @@ function init(){
      * Attach events to media links
      * */
     for(var i = 0 ; i < 5; i++){
-        $(String('#'+i)+'_media_post_link').on('click', function(){
-            //var lat = $(String('#'+i)+'_media_post_lat');
-            //var lng = $(String('#'+i)+'_media_post_lng');
-            console.log(this.id);
+        $(String('#'+i)+'_media_post_').on('click', function(){
+            var lat = $("#"+String(this.id)+'lat').text();
+            var lng = $("#"+String(this.id)+'lng').text();
+            var point = new ol.geom.Point(ol.proj.transform([lat, -(-lng)], 'EPSG:4326', 'EPSG:3857'));
+            tree.map.getView().animate({
+                center: point.getCoordinates(),
+                zoom: 16,
+                duration: 2000
+            });
+            $(".sidebar-right .sidebar-body").toggle();
+            $('.mini-submenu-right').toggle();
         });
     }
 }
