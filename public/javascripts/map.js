@@ -113,6 +113,8 @@ function init(){
             maximumAge: 0
         }
     });
+    var media_book = [];
+    var start_page = 0;
     var pointsSource = new ol.source.Vector({
         //strategy: ol.loadingstrategy.bbox,
         strategy: ol.loadingstrategy.all,
@@ -125,16 +127,37 @@ function init(){
                         var tmp = new ol.Feature({
                             id: feature.properties.id,
                             geometry: new ol.geom.Point(ol.proj.transform(feature.geometry.coordinates, 'EPSG:4326', 'EPSG:3857')),
+                            date: feature.properties.date,
+                            tid: feature.properties.tid,
+                            accuracy: feature.properties.accuracy,
+                            status: feature.properties.status,
                             img: feature.properties.img64
                         });
                         pointsSource.addFeature(tmp);
                     }
                 });
-                var sf = ol.coordinate.createStringXY(3);
-                features.reverse().forEach(function(feature){
-                    createRSSMedia(feature.properties.id, sf(feature.geometry.coordinates), feature.properties.img64);
-                });
-                    //createRSSMedia('1', '11.11 22.22');
+                // Create mediaBook
+                var step = 1;
+                var length = features.length - 1;
+                var page = [];
+                while (length > -1 ) {
+                    // save last
+                    var last = features[length];
+                        // Add to page.
+                            if(page.length < 5){
+                                page.push(last);
+                            } else {
+                                media_book.push(page);
+                                page = [];
+                            }
+                    // remove last
+                    features.pop();
+                    // increase step
+                    length = length - step;
+                }
+                media_book.push(page);
+                $('#feed_total_page_number').text(String(media_book.length));
+                fillMediaData(5)
             });
         }
     });
@@ -194,7 +217,8 @@ function init(){
         ],
         view: view
     });
-    var tree = new layerTree({map: map, target: 'layers'});
+    // var tree = ...
+    tree = new layerTree({map: map, target: 'layers'});
     map.getLayers().forEach(function(l){
         if(l.get('name'))
             tree.createRegistry(l);
@@ -235,9 +259,8 @@ function init(){
             return layer.get('name') == 'Points';
         }
     });
-    var selectSingleButton = document.getElementById('single-select-button');
+
     var selectContainer = document.getElementById('popup-select');
-    var selectContent = document.getElementById('popup-content-select');
     var selectCloser  = document.getElementById('popup-closer-select');
     var selectOverlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
         element: selectContainer,
@@ -247,40 +270,44 @@ function init(){
         }
     }));
     map.addOverlay(selectOverlay);
-    var feed = document.getElementById('feed');
-    var feedPanel = document.createElement('div');
-    feedPanel.className = 'panel-body';
-    feed.append(feedPanel);
     //////////////////////// FUNCTIONS ////////////////////////////////
-    function validateForm(){
-        var status = document.forms["submit_form"]["status_select"].value;
-        if(x === ''){
-            alert('Status måste vara ifylld');
-            return false;
+    function fillMediaData(n){
+        for(var i = 0; i < n; i++){
+            setMediaData(i, media_book[start_page][i]);
         }
     }
-    function createRSSMedia(id, coords, img){
-        var media = document.createElement('div');
-        media.className = 'media';
-        feedPanel.append(media);
-        var mediaLeft = document.createElement('div');
-        mediaLeft.className = 'media-left';
-        media.append(mediaLeft);
-        var mediaBody = document.createElement('div');
-        mediaBody.className = 'media-body';
-        media.append(mediaBody);
-        var mediaIMG = document.createElement('img');
-        mediaIMG.className = 'media-object';
-        mediaIMG.setAttribute('style', 'width:60px;');
-        mediaIMG.setAttribute('src', img);
-        mediaLeft.append(mediaIMG);
-        var mediaBodyHeading = document.createElement('h4');
-        mediaBodyHeading.className = 'media-heading';
-        mediaBodyHeading.innerHTML = id;
-        var mediaBodyContent = document.createElement('p');
-        mediaBodyContent.innerHTML = coords;
-        mediaBody.append(mediaBodyHeading);
-        mediaBody.append(mediaBodyContent);
+    function setMediaData(p, f){
+        var id_src = '#'+p+'_media_post'
+        var img_src = id_src+'_img';
+        var lat_src = id_src+'_lat';
+        var lng_src = id_src+'_lng';
+        var acc_src = id_src+'_acc';
+
+        var i = f.properties.img64;
+
+        var lat = f.geometry.coordinates[0];
+        var lng = f.geometry.coordinates[1];
+        var a = f.properties.accuracy;
+
+        $(lat_src).text(lat);
+        $(lng_src).text(lng);
+
+        if (typeof a === 'undefined' || !a){
+            $(acc_src).text('- m');
+        } else {
+            $(acc_src).text(a);
+        }
+        if (typeof i === 'undefined' || !i) {
+            if(f.properties.status === 'Saknas'){
+                $(img_src).prop('src', '/images/roadblocks/saknas.png');
+            } else if(f.properties.status === 'Finns') {
+                $(img_src).prop('src', '/images/roadblocks/finns.png');
+            } else {
+                $(img_src).prop('src', '/images/roadblocks/standard.png');
+            }
+        } else {
+            $(img_src).prop('src', i);
+        }
     }
 
     function pantopoint(){
@@ -355,16 +382,25 @@ function init(){
     selectSingleClick.on('select', function(evt){
             var f = evt.selected[0];
             var c = f.getGeometry().getCoordinates();
-            var t = ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
-            var sf = ol.coordinate.createStringXY(3);
-            var id = f.get('id');
-            //console.log(f.getProperties());
             selectOverlay.setPosition(c);
-            var s = 'id: '+id+'<br> coordinates: '+sf(t);
-            //selectContent.innerHTML = s;
-            var img_src = f.get('img');
-            var img_el = $('#popup-content-select img');
-            img_el.attr('src', img_src);
+            var d = f.get('date');
+            var t = f.get('tid');
+            var s = f.get('status');
+            var i = f.get('img');
+            $('#popup-content-select-date').text(d);
+            $('#popup-content-select-tid').text(t);
+            $('#popup-content-select-status').text(s);
+            if (typeof i === 'undefined' || !i) {
+                if(s === 'Saknas'){
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/saknas.png');
+                } else if(s === 'Finns') {
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/finns.png');
+                } else {
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/standard.png');
+                }
+            } else {
+                $('#popup-content-select-img').prop('src', i);
+            }
         });
     selectCloser.addEventListener('click', function(){
         closeSelect();
@@ -418,13 +454,7 @@ function init(){
         $('#meny').collapse('hide');
         geolocation.setTracking(true);
         setTimeout(function(){
-            if(geolocation.getAccuracy() < 30){
-                //console.log(geolocation.getAccuracy())
-                pantopoint();
-            } else {
-                tree.showErrorMsg('Nogrannheten överskred 30m.');
-                //console.log(geolocation.getAccuracy());
-            }
+            pantopoint();
         }, 1000);
     });
     document.getElementById('geolocation_modal_denied').addEventListener('click', function(){
@@ -484,6 +514,59 @@ function init(){
         var input = $('#popup-submit-img-base64').val('');
     });
 
+    /**
+     * Changing RSS page
+     */
+    $('#rss_previous').on('click', function(){
+        if(start_page != 0){
+            start_page--;
+            var t = start_page + 1;
+            $('#current_page').text(String(t));
+            if (start_page !== media_book.length){
+                for(var i = 0 ; i < 5; i++){
+                    if($(String('#'+i)+'_media_post').css('display') == 'none') {
+                        $(String('#'+i)+'_media_post').css('display', 'block');
+                    }
+                }
+                fillMediaData(5);
+            }
+        }
+    });
+    $('#rss_next').on('click', function(){
+        if(start_page < media_book.length){
+            start_page++;
+            var t = (start_page + 1) <= media_book.length ? (start_page + 1) : start_page;
+            $('#current_page').text(String(t));
+            if (start_page !== media_book.length){
+                //om längden är 5
+                if(media_book.length == 5){
+                    // fyll på 5
+                    fillMediaData(5);
+                } else {
+                    // fyll på med resten
+                    // gör resten osynliga
+                    // fillMediaData(media_book.length);
+                    var rest = 5 - media_book[start_page].length;
+                    for(var i = 0; i < rest; i++){
+                        var id = String((rest - i))+"_media_post";
+                        $("#"+id).css('display', 'none');
+                    }
+                    fillMediaData(media_book[start_page].length);
+                }
+                //console.log(media_book[start_page].length);
+            }
+        }
+    });
+    /**
+     * Attach events to media links
+     * */
+    for(var i = 0 ; i < 5; i++){
+        $(String('#'+i)+'_media_post_link').on('click', function(){
+            //var lat = $(String('#'+i)+'_media_post_lat');
+            //var lng = $(String('#'+i)+'_media_post_lng');
+            console.log(this.id);
+        });
+    }
 }
 document.addEventListener('DOMContentLoaded', init);
 

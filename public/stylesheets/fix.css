@@ -8,7 +8,7 @@ label.list-group-item.checkbox-inline:first-child {
     border-top: 0px;
 }
 .hidden-to-db {
-    /* display: none; */
+    display: none;
 }
 #sketch-holder{
     width: 320px;

@@ -18,7 +18,7 @@ router.get('/points', function (req, res) {
             "FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features "+
             "FROM (SELECT 'Feature' As type "+
             ", ST_AsGeoJSON(lg.geom)::json As geometry "+
-            ", row_to_json((SELECT l FROM (SELECT id, img64) As l "+
+            ", row_to_json((SELECT l FROM (SELECT id, date, tid, accuracy, status, img64) As l "+
             ")) As properties "+
             "FROM loc As lg   ) As f )  As fc;");
         query.on("row", function (row, result) {
@@ -36,12 +36,25 @@ router.get('/points', function (req, res) {
 router.post('/report', function(req, res, next) {
     var x = req.body.x_coordinates;
     var y = req.body.y_coordinates;
+    var d = req.body.date;
+    var t = req.body.time;
+    var a = req.body.my_accuracy;
     var img = req.body.img_baseg64;
+    var s = req.body.status;
     // PREPARED STATEMENT FUNGERAR EJ.... query, [v1, v2]
     var q = "INSERT INTO loc(geom) VALUES (ST_GeomFromText('POINT($1  $2)', 4326));";
     var q2 = "INSERT INTO loc(geom) VALUES (ST_GeomFromText('POINT("+x+" "+y+"), 4326));";
     var q3 = "INSERT INTO loc(geom, img64) VALUES (" +
              "ST_GeomFromText('POINT("+x+" "+y+")', 4326)," +
+             "'"+img+"'"+
+             ");"
+
+    var q4 = "INSERT INTO loc(geom, date, tid, accuracy, status, img64) VALUES (" +
+             "ST_GeomFromText('POINT("+x+" "+y+")', 4326)," +
+             "'"+d+"',"+
+             "'"+t+"',"+
+             "'"+a+"',"+
+             "'"+s+"',"+
              "'"+img+"'"+
              ");"
     pg.connect(conString, function(err, client, done){
@@ -50,11 +63,20 @@ router.post('/report', function(req, res, next) {
             return res.status(500).json({success: false, data: err});
         }
         // GÖR OM
-        client.query(q3, function(err, result){
+        client.query(q4, function(err, result){
             done();
             if(err){
                 done();
-                return res.status(500).json({success: false, data: err, x: x, y: y, q: q, q3: q3});
+                return res.status(500).json({
+                    success: false,
+                    data: err,
+                    x: x,
+                    y: y,
+                    date: d,
+                    time: t,
+                    accuracy: a,
+                    status: s,
+                    QUERY: q4});
             }
             //if(err) return res.send(err);
             res.redirect('/');

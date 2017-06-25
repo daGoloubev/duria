@@ -51,22 +51,13 @@ block content
                 //- Synliga för användaren
             .form-group
                 label(for='status_select')| Aktuell status för vägbom
-                //.radio
-                    label
-                        input(type="radio", name="saknas")
-                        | Vägbommen finns i verkligheten men saknas i kartan.
-                //.radio
-                    label
-                        input(type="radio", name="finns")
-                        | Vägbommen finns i verkligheten och i kartan.
-
                 select(id='status_select', class='', name='status')
                     optgroup(label='default')
-                        option()
+                        option(value="")
                     optgroup(label='Inventering')
-                        option(value='Finns') Vägbommens position stämmer överens med kartan.
+                        option(value='Finns', name='status') Vägbommens position stämmer överens med kartan.
                     optgroup(label='Nya Uppdrag')
-                        option(value='Saknas') Vägbommens position saknas i kartan.
+                        option(value='Saknas', name='status') Vägbommens position saknas i kartan.
             .form-group
                 input(type='submit', id='popup-submit-submit',class='form-control btn btn-success', value='Rapportera')
                 //- TODO:: Rest all input values
@@ -78,7 +69,21 @@ block content
     #popup-select.ol-popup
         a(href='#', id='popup-closer-select', class='ol-popup-closer')
         #popup-content-select
-            img
+            .media
+                .media-left
+                    img(src='/images/roadblocks/standard.png', style="width: 128px; height: 128px;", id="popup-content-select-img")
+                .media-right(style="width: 300px; padding: 0px;")
+                    h4.media-heading Information
+                    table.table(style="width: 200px; margin-bottom: 0px;")
+                      tr
+                        th Datum
+                        td#popup-content-select-date
+                      tr
+                        th Tid
+                        td#popup-content-select-tid
+                      tr
+                        th Status
+                        td#popup-content-select-status
     +info_modal('geolocation_modal', 'Geolocation', 'Applikationen kommer nu att använda oss av er inbyggda GPS sensor för att ta reda på er position och förflytta er till den delen av kartan.')
     +info_modal('report_modal', 'Rapportera', 'Du kommer nu aktivera funktionen att rapportera in väghinder genom att klicka i kartan.')
     +info_modal('urval_modal', 'Urval', 'Du kommer nu få möjligheten att hämta information om redan inrapporterade väghinder genom att klicka på dessa i kartan.')
