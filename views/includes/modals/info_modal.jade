@@ -6,9 +6,8 @@ mixin info_modal(modal_id, modal_title, modal_txt)
                     button.close(type='button',data-dismiss='modal', id='#{modal_id}_close') &times;
                     h4.modal-title
                         | #{modal_title}
-                    .modal-body
-                        p
-                            | #{modal_txt}
-                    .modal-footer
-                        button.btn.btn-success(type='button',data-dismiss='modal', id='#{modal_id}_accept')| Acceptera
-                        button.btn.btn-danger(type='button',data-dismiss='modal', id='#{modal_id}_denied')| Avbryt
+                .modal-body
+                     p| #{modal_txt}
+                .modal-footer
+                     button.btn.btn-success(type='button',data-dismiss='modal', id='#{modal_id}_accept')| Acceptera
+                     button.btn.btn-danger(type='button',data-dismiss='modal', id='#{modal_id}_denied')| Avbryt

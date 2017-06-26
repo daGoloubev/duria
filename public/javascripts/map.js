@@ -181,24 +181,24 @@ function init(){
                 alias: 'OSM',
                 iconName: 'globe'
             }),
-            //new ol.layer.Tile({
-            //    visible: true,
-            //    source: new ol.source.TileWMS({
-            //        url: 'http://192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:orto025&srs=EPSG:4326'
-            //    }),
-            //    name: 'TopoMap',
-            //    alias: 'Ortofoto',
-            //    iconName: 'globe'
-            //}),
-            //new ol.layer.Tile({
-            //    visible: true,
-            //    source: new ol.source.TileWMS({
-            //        url: 'http://192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:topowebbkartan&srs=EPSG:4326'
-            //    }),
-            //    name: 'TopoMap',
-            //    alias: 'Topografisk webbkarta',
-            //    iconName: 'globe'
-            //}),
+            new ol.layer.Tile({
+                visible: true,
+                source: new ol.source.TileWMS({
+                    url: 'http://192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:orto025&srs=EPSG:4326'
+                }),
+                name: 'TopoMap',
+                alias: 'Ortofoto',
+                iconName: 'fighter-jet'
+            }),
+            new ol.layer.Tile({
+                visible: true,
+                source: new ol.source.TileWMS({
+                    url: 'http://192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:topowebbkartan&srs=EPSG:4326'
+                }),
+                name: 'TopoMap',
+                alias: 'Topografisk webbkarta',
+                iconName: 'map-o'
+            }),
             new ol.layer.Vector({
                 visible: true,
                 source: new ol.source.Vector({}),
@@ -597,6 +597,12 @@ function init(){
             $('.mini-submenu-right').toggle();
         });
     }
+    /**
+     * Attach events to window on load
+     */
+    $(window).on('load',function(){
+        $('#manual_modal').modal('show');
+    });
 }
 document.addEventListener('DOMContentLoaded', init);
 
