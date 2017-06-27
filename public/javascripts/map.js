@@ -600,7 +600,7 @@ function init(){
     /**
      * Attach events to window on load
      */
-    $(window).on('load',function(){
+    $(window).one('load',function(){
         $('#manual_modal').modal('show');
     });
 }
