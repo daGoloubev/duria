@@ -184,7 +184,7 @@ function init(){
             new ol.layer.Tile({
                 visible: true,
                 source: new ol.source.TileWMS({
-                    url: 'http://192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:orto025&srs=EPSG:4326'
+                    url: '//192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:orto025&srs=EPSG:4326'
                 }),
                 name: 'TopoMap',
                 alias: 'Ortofoto',
@@ -193,7 +193,7 @@ function init(){
             new ol.layer.Tile({
                 visible: true,
                 source: new ol.source.TileWMS({
-                    url: 'http://192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:topowebbkartan&srs=EPSG:4326'
+                    url: '//192.168.1.3:8080/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:topowebbkartan&srs=EPSG:4326'
                 }),
                 name: 'TopoMap',
                 alias: 'Topografisk webbkarta',
