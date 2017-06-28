@@ -10,12 +10,14 @@ mixin layers
     .panel-heading
         h4.panel-title
             a(data-toggle='collapse', href='#layers')
-                i(class='fa fa-stack-exchange fa-lg', aria-hidden='true')|&nbsp; Lager
+                i(class='fa fa-stack-exchange fa-lg', aria-hidden='true')|&nbsp; Lagerhanteraren
             span(class='pull-right slide-submenu')
                 i(class='fa fa-arrow-left', aria-hidden='true')|&nbsp;
     #layers(class='panel-collapse collapse in')
-        i(class='fa fa-info', style='margin-left: 5px;')|&nbsp; Klicka på ikonen för att ändra transparens.
+        //- i(class='fa fa-info', style='margin-left: 5px;')|&nbsp; Klicka på ikonen för att ändra transparens.
         //- .panel-body.list-group
              //- layer('Väghinder', 'exclamation-triangle', 'margin-left: 10px;')
              //- +layer('Flygbilder', 'plane')
              //- +layer('Karta', 'globe')
+    .content
+        button(type='button', class='btn btn-block btn-primary', data-target='#lagerhanteraren_modal', data-toggle='modal') Om Lagerhanteraren

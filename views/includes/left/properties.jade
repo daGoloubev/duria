@@ -4,6 +4,8 @@ mixin properties
             a(data-toggle='collapse', href='#properties')
                 i(class='fa fa-newspaper-o fa-lg', aria-hidden='true')|&nbsp; GPS Egenskaper
     #properties(class='panel-collapse collapse in')
-        .panel-body
+        .panel-body(style='padding-bottom: 0px;')
             ul.list-group
                 li.list-group-item#accuracy Noggrannhet: - m
+        .content
+            button(type='button', class='btn btn-block btn-primary', data-target='#gpsegenskaper_modal', data-toggle='modal') Om GPS Egenskaper

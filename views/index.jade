@@ -112,20 +112,20 @@ block content
                          .media-left
                              img(style="width: 126px;", class="media-object", src="images/info/GPS_high.png")
                          .media-body
-                             h4.media-heading Hög noggranhet
-                             p Det finns ett antal orsaker till att GPS noggranheten är hög.
+                             h4.media-heading Hög noggrannhet
+                             p Det finns ett antal orsaker till att GPS noggrannheten är hög.
                              p Exempelvis:
                                  ul
                                     li Din position är inomhus eller under ett tak.
                                     li Din position är nära ett föremål exemplivis träd, höga byggnader som blockerar GPS signalen
-                                    li Oftast beror hög noggranhet på att positionen befinner sig vid en stationär enhet.
+                                    li Oftast beror hög noggrannhet på att positionen befinner sig vid en stationär enhet.
                                     li Noggrannheten kan också manipuleras av en VPN (Virtual Private Network) tjänst
                                     li Din ISP (Internet Service Provider) dvs. internetleverantör kan också förvränga GPS noggrannheten.
                     .media
                          .media-left
                              img(style="width: 126px;", class="media-object", src="images/info/GPS_low.png")
                          .media-body
-                             h4.media-heading Låg noggranhet
+                             h4.media-heading Låg noggrannhet
                              p Om noggrannehten är låg så kan du följa din position i kartan om du förflyttar dig exempelvis.
                 .modal-footer
                     button.btn.btn-success(type='button',data-dismiss='modal', id='geolocation_modal_accept')| Acceptera
@@ -176,26 +176,51 @@ block content
                     h2.modal-title
                        | &nbsp; Rapportera
                 .modal-body
-                    p Du kommer nu aktivera funktionen för att rapportera in information om en vägbom.
-                    p När du gör en rapportering så måste du ange vägbommens status.
-                    p Det finns två olika definitioner för status.
-                    h4 Status: Finns
-                    p Vägbom finns i kartan men saknas i fält.
-                    h4 Status: Saknas
-                    p Vägbom saknas i kartan men finns i fält.
-                    p Du har även möjligheten att ta en bild på platsen och skicka med din rapport (detta är dock helt frivilligt).
+                    .media
+                        .media-left
+                            img(style="width: 128px; padding-top:15px;", class="media-object", src="images/info/vagbom/vagbom_karta.png")
+                        .media-body
+                            p Du kommer nu aktivera funktionen för att rapportera in information om en vägbom.
+                            p Bilden intill visar hur en vägbom ser ut eller symboliseras i kartan.
+                            p När du gör en rapportering så måste du ange vägbommens status.
+                            p Det finns tre olika alternativ för status.
+                    table.table
+                        thead
+                            tr
+                                th Status
+                                th Förklaring
+                        tbody
+                            tr
+                                td Finns
+                                td Vägbommen finns både i kartan och i verkligheten.
+                            tr
+                                td Ny vägbom
+                                td Vägbommen saknas i kartan fast den finns i verkligheten.
+                            tr
+                                td Försvunnen
+                                td Vägbommen finns i kartan men den finns inte i verkligheten.
+                    //- h4 Status: Finns
+                    //- p Vägbom finns i kartan men saknas i fält.
+                    //- h4 Status: Saknas
+                    //- p Vägbom saknas i kartan men finns i fält.
+                    //- p Du har även möjligheten att ta en bild på platsen och skicka med din rapport (detta är dock helt frivilligt).
                     hr
-                    h3 Vad är en vägbom?
-                    p Nedan följer en detaljerad specifikation.
-                    hr
-                    h3 Vägbom
-                    h4 Definition
-                    p Permanent konstruktion som används för att avstänga väg för obehörig trafik.
-                    h4 Beskrivning
+                    h3 Hur ser är en vägbom ut i verkligheten?
+                    p
+                        img(class="img-responsive", style="width:50%;display:inline; padding-right: 5px;", src="images/info/vagbom/vagbom0.jpg")
+                        img(class="img-responsive", style="width:50%; display:inline; padding-right: 5px;", src="images/info/vagbom/vagbom1.jpg")
                     p Mittpunkt för permanent avstängning av enskild väg som kan bestå av vägbom, kedja, wire (låsta eller tillfälligt öppna).
-                    h4 Urval
-                    p Redovisas fullständingt för bilväg och sämre väg.
-                    p Undantag för väg kortare än 250 m, uppfartsvägar och vägar inom bebyggelseområde.
+
+                    //- p Nedan följer en detaljerad specifikation.
+                    //-hr
+                    //-h3 Vägbom
+                    //-h4 Definition
+                    //-p Permanent konstruktion som används för att avstänga väg för obehörig trafik.
+                    //-h4 Beskrivning
+                    //-p Mittpunkt för permanent avstängning av enskild väg som kan bestå av vägbom, kedja, wire (låsta eller tillfälligt öppna).
+                    //-h4 Urval
+                    //-p Redovisas fullständingt för bilväg och sämre väg.
+                    //-p Undantag för väg kortare än 250 m, uppfartsvägar och vägar inom bebyggelseområde.
                 .modal-footer
                     button.btn.btn-success(type='button',data-dismiss='modal', id='report_modal_accept')| Acceptera
                     button.btn.btn-danger(type='button',data-dismiss='modal', id='report_modal_denied')| Avbryt
@@ -336,3 +361,25 @@ block content
                 .modal-footer
                     button.btn.btn-success(type='button',data-dismiss='modal', id='manual_modal_accept')| Kör igång!
                     button.btn.btn-danger(type='button',data-dismiss='modal', id='manual_modal_denied')| Läs senare.
+    .modal.fade(role='dialog', id='lagerhanteraren_modal')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button',data-dismiss='modal', id='lagerhanteraren_modal_close') &times;
+                    h2.modal-title
+                        | &nbsp; Om Lagerhanteraren
+                .modal-body
+                    p Om lagerhateraren och en liten demo.
+                .modal-footer
+                    button.btn.btn-success(type='button',data-dismiss='modal', id='lagerhanteraren_modal_accept')| OK
+    .modal.fade(role='dialog', id='gpsegenskaper_modal')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button',data-dismiss='modal', id='gpsegenskaper_modal_close') &times;
+                    h2.modal-title
+                        | &nbsp; Om GPS Egenskaper
+                .modal-body
+                    p Om noggranhet.
+                .modal-footer
+                    button.btn.btn-success(type='button',data-dismiss='modal', id='gpsegenskaper_modal_accept')| OK

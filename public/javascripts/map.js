@@ -164,39 +164,39 @@ function init(){
     var map = new ol.Map({
         target: "map",
         layers: [
-            new ol.layer.Tile({
-                visible: false,
-                source: new ol.source.BingMaps({
-                    key: 'Aj0LLnXkcQViB8dmKhWrqiVDbhKqJUE3-ROu6f6NKQbL73li6F_Ob7aHEyMCBmcw',
-                    imagerySet: 'Aerial'
-                }),
-                name: 'BingMapsAerial',
-                alias: 'Flygbilder BING',
-                iconName: 'plane'
-            }),
-            new ol.layer.Tile({
-                visible: false,
-                source: new ol.source.OSM(),
-                name: 'OpenStreetMap',
-                alias: 'OSM',
-                iconName: 'globe'
-            }),
-            new ol.layer.Tile({
-                visible: true,
-                source: new ol.source.TileWMS({
-                    url: 'https://duria.se:8443/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:orto025&srs=EPSG:4326'
-                }),
-                name: 'TopoMap',
-                alias: 'Ortofoto',
-                iconName: 'fighter-jet'
-            }),
+            //new ol.layer.Tile({
+            //    visible: false,
+            //    source: new ol.source.BingMaps({
+            //        key: 'Aj0LLnXkcQViB8dmKhWrqiVDbhKqJUE3-ROu6f6NKQbL73li6F_Ob7aHEyMCBmcw',
+            //        imagerySet: 'Aerial'
+            //    }),
+            //    name: 'BingMapsAerial',
+            //    alias: 'Flygbilder BING',
+            //    iconName: 'plane'
+            //}),
+            //new ol.layer.Tile({
+            //    visible: false,
+            //    source: new ol.source.OSM(),
+            //    name: 'OpenStreetMap',
+            //    alias: 'OSM',
+            //    iconName: 'globe'
+            //}),
+            //new ol.layer.Tile({
+            //    visible: true,
+            //    source: new ol.source.TileWMS({
+            //        url: 'https://duria.se:8443/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:orto025&srs=EPSG:4326'
+            //    }),
+            //    name: 'TopoMap',
+            //    alias: 'Ortofoto',
+            //    iconName: 'fighter-jet'
+            //}),
             new ol.layer.Tile({
                 visible: true,
                 source: new ol.source.TileWMS({
                     url: 'https://duria.se:8443/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:topowebbkartan&srs=EPSG:4326'
                 }),
                 name: 'TopoMap',
-                alias: 'Topografisk webbkarta',
+                alias: 'Webbkarta',
                 iconName: 'map-o'
             }),
             new ol.layer.Vector({
@@ -204,7 +204,7 @@ function init(){
                 source: new ol.source.Vector({}),
                 name: 'Geolocation',
                 alias: 'GPS',
-                iconName: 'signal'
+                iconName: 'location-arrow'
             }),
             new ol.layer.Vector({
                 visible: true,
@@ -270,6 +270,14 @@ function init(){
             s.addFeature(accuracyFeature, positionFeature);
         }
     });
+    map.getLayers().insertAt(0,
+        new ol.layer.Tile({
+            visible: true,
+            source: new ol.source.TileWMS({
+                url: 'https://duria.se:8443/geoserver/duria/wms?service=WMS&version=1.1.0&request=GetMap&layers=duria:orto025&srs=EPSG:4326'
+            })
+        })
+    );
     var drawSource = new ol.source.Vector({ wrapX: false });
     var drawVector = new ol.layer.Vector({ source: drawSource });
     map.addLayer(drawVector);
