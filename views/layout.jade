@@ -27,7 +27,7 @@ html(lang="se")
   body
     .container
       block navbar
-          +navbar
+        +navbar
     .navbar-offset
     block content
     script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/ol3/4.1.1/ol.js', integrity='sha384-oaswepoPDnt10p+m6EF7IhHMg3pFuN3ZiJ/TxSEYIdaeqZ//ihlFKScJEtyBqkPg', crossorigin='anonymus')
@@ -38,10 +38,53 @@ html(lang="se")
     //- script(type='text/javascript', src='/javascripts/map.js', integrity='sha384-CdCxI0KV3mbcg8s8+60ZiKZLce8wiyDCb6Dv6qNIGalczDAMveXrF+HAOgUxvsXw', crossorigin='anonymus')
     script(type='text/javascript', src='/javascripts/map.js')
     script(type='text/javascript').
+      var sure = false;
       function validateForm() {
-        var x = document.forms["myForm"]["status"].value;
-        if (x == "") {
+        var falt = document.forms["myForm"]["Finns_i_falt"].value;
+        var karta = document.forms["myForm"]["Finns_i_karta"].value;
+        var status = $('#hidden_output_to_db');
+        if (falt == "" && karta == "" || falt == "" && karta != "" || falt != "" && karta == "" || falt == "" && karta == "Nej" || falt == "Nej") {
             $('#status_modal').modal('show');
             return false;
+        } else if (karta == 'Ja' && falt == 'Ja'){
+            if (!sure) {
+                $('#bekräfta_modal').modal('show');
+            }
+            $('#bekräfta_modal_accept').on('click', function () {
+                sure = true;
+                $('#bekräfta_modal').modal('hide');
+            });
+            if (sure) {
+                return status.attr('value', 'Bekräftad');
+            } else {
+                return false;
+            }
+        } else if (karta == 'Ja' && falt == 'Nej'){
+            if (!sure) {
+                $('#tabort_modal').modal('show');
+            }
+            $('#tabort_modal_accept').on('click', function () {
+                sure = true;
+                $('#tabort_modal').modal('hide');
+            });
+            if (sure) {
+                return status.attr('value', 'LäggTill');
+            } else {
+                return false;
+            }
+        } else if (karta == 'Nej' && falt == 'Ja'){
+            if (!sure) {
+                $('#läggtill_modal').modal('show');
+            }
+            $('#läggtill_accept').on('click', function () {
+                sure = true;
+                $('#läggtill_modal').modal('hide');
+            });
+            if (sure) {
+                return status.attr('value', 'TaBort');
+            } else {
+                return false;
+            }
         }
+        return false;
       }

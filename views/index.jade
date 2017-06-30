@@ -1,3 +1,4 @@
+include includes/modals/confirm_modal
 include includes/modals/info_modal
 include includes/modals/error_modal
 include includes/modals/camera_modal
@@ -37,8 +38,8 @@ block content
                     label| Y
                     input(id='popup-submit-position-y', class='form-control', name='y_coordinates')
                 .form-group.date-to-db
-                     label| Datum
-                     input(id='popup-submit-date', class='form-control', name='date')
+                    label| Datum
+                    input(id='popup-submit-date', class='form-control', name='date')
                 .form-group.time-to-db
                     label| Tid
                     input(id='popup-submit-time', class='form-control', name='time')
@@ -46,18 +47,36 @@ block content
                     label| Min accuracy
                     input(id='popup-submit-my-position-accuracy', class='form-control', name='my_accuracy')
                 .form-group.img-to-db
-                     label| images as base64
-                     input(id='popup-submit-img-base64', class='form-control', name='img_baseg64')
+                    label| images as base64
+                    input(id='popup-submit-img-base64', class='form-control', name='img_baseg64')
+                .form-group.status-to-db
+                    input(id="hidden_output_to_db", class='form-control', name="status", value="")
                 //- Synliga för användaren
             .form-group
-                label(for='status_select')| Aktuell status för vägbom
-                select(id='status_select', class='', name='status')
-                    optgroup(label='default')
-                        option(value="")
-                    optgroup(label='Saknas i fält')
-                        option(value='Finns', name='status') Vägbommens position stämmer överens med kartan.
-                    optgroup(label='Finns i fält')
-                        option(value='Saknas', name='status') Vägbommens position saknas i kartan.
+                p Finns vägbommen i verkligheten?
+                label.radio-inline
+                    input(type="radio", name="Finns_i_falt", value="Ja")
+                    label Ja
+                label.radio-inline
+                    input(type="radio", name="Finns_i_falt", value="Nej")
+                    label Nej
+                p Finns vägbommen i kartan?
+                label.radio-inline
+                    input(type="radio", name="Finns_i_karta", value="Ja")
+                    label Ja
+                label.radio-inline
+                    input(type="radio", name="Finns_i_karta", value="Nej")
+                    label Nej
+                //- label(for='status_select')
+                //- select(id='status_select', class='', name='status')
+                    optgroup(label='')
+                        option(value="") Ange vägbommens tillstånd
+                    optgroup(label='Din rapport bekräftar att vägbommen både finns i kartan och i verkligheten.')
+                        option(value='Bekräftad', name='status') Bekräfta
+                    optgroup(label='Din rapport anger att vägbommen saknas i kartan fast den finns i verkligheten.')
+                        option(value='Finns', name='status') Lägg till
+                    optgroup(label='Din rapport anger att vägbommen finns i kartan men den finns inte längre i verkligheten.')
+                        option(value='Saknas', name='status') Ta bort
             .form-group
                 input(type='submit', id='popup-submit-submit',class='form-control btn btn-success', value='Rapportera')
                 //- TODO:: Rest all input values
@@ -86,29 +105,35 @@ block content
                         td#popup-content-select-status
     +em
     +camera('camera_modal', 'Kamera')
-    +info_modal('status_modal', 'Aktuell status för vägbom saknas', 'Välj lämpligt alternativ.')
+    +info_modal('status_modal', 'Rapport kan inte skickas', 'Applikationen kan endast skicka en rapport om båda frågorna är besvarade och om båda svaren inte är nej.')
 
+    +confirm_modal('bekräfta_modal', 'Intyg', 'Stämmer det att vägbommen finns i verkligheten och i kartan?')
+    +confirm_modal('läggtill_modal', 'Intyg', 'Stämmer det att vägbommen finns i verkligheten och att vägbommen inte finns kartan?')
+    +confirm_modal('tabort_modal', 'Intyg', 'Stämmer det att vägbommen saknas i verkligheten och att vägbommen finns i kartan?')
+
+    //- +confirm_modal('inofficiell_modal', 'Intyg', 'Stämmer det att vägbommen saknas i verkligheten och att vägbommen saknas i kartan?')
     //- +info_modal('geolocation_modal', 'Geolocation', 'Applikationen kommer nu att använda oss av er inbyggda GPS sensor för att ta reda på er position och förflytta er till den delen av kartan.')
     .modal.fade(role='dialog', id='geolocation_modal')
         .modal-dialog
             .modal-content
                 .modal-header
-                    button.close(type='button',data-dismiss='modal', id='geolocation_modal_close') &times;
-                    h2.modal-title
-                        | &nbsp; Min Position
+                    button.close(type='button', data-dismiss='modal', id='geolocation_modal_close') &times;
+                    h4.modal-title
+                        | Min Position
                 .modal-body
-                    p Applikationen kommer nu att försöka hämta din position m.h.a GPS (Global Positiong System).
-                    p Varje GPS mätning skapar en parameter som heter noggrannhet.
-                    p Noggrannheten används för att representera GPS signalen i applikationen som en blå cirkel.
-                    .media
+                    p Är du säker på att du vill aktivera 'Min Position'?
+                    //p Applikationen kommer nu att försöka hämta din position m.h.a GPS (Global Positiong System).
+                    //p Varje GPS mätning skapar en parameter som heter noggrannhet.
+                    //p Noggrannheten används för att representera GPS signalen i applikationen som en blå cirkel.
+                    //-.media
                          .media-left
                              img(style="width: 128px;", class="media-object", src="images/info/layer_handler.png")
                          .media-body
                              h4.media-heading Lagerhanteraren
                              p Det går att stänga av GPS symbolen via lagerhanteraren som finns i kartan.
                              p Du kan också se din aktuella noggrannhet via lagerhanteraren och undermenyn GPS Egenskaper.
-                    hr
-                    .media
+                    //-hr
+                    //-.media
                          .media-left
                              img(style="width: 126px;", class="media-object", src="images/info/GPS_high.png")
                          .media-body
@@ -121,14 +146,14 @@ block content
                                     li Oftast beror hög noggrannhet på att positionen befinner sig vid en stationär enhet.
                                     li Noggrannheten kan också manipuleras av en VPN (Virtual Private Network) tjänst
                                     li Din ISP (Internet Service Provider) dvs. internetleverantör kan också förvränga GPS noggrannheten.
-                    .media
+                    //-.media
                          .media-left
                              img(style="width: 126px;", class="media-object", src="images/info/GPS_low.png")
                          .media-body
                              h4.media-heading Låg noggrannhet
                              p Om noggrannehten är låg så kan du följa din position i kartan om du förflyttar dig exempelvis.
                 .modal-footer
-                    button.btn.btn-success(type='button',data-dismiss='modal', id='geolocation_modal_accept')| Acceptera
+                    button.btn.btn-success(type='button',data-dismiss='modal', id='geolocation_modal_accept')| Ja
                     button.btn.btn-danger(type='button',data-dismiss='modal', id='geolocation_modal_denied')| Avbryt
     //- +info_modal('urval_modal', 'Urval', 'Du kommer nu få möjligheten att hämta information om redan inrapporterade vägbommar genom att klicka på dessa i kartan.')
     .modal.fade(role='dialog', id='urval_modal')
@@ -173,39 +198,21 @@ block content
             .modal-content
                 .modal-header
                     button.close(type='button',data-dismiss='modal', id='report_modal_close') &times;
-                    h2.modal-title
-                       | &nbsp; Rapportera
+                    h3.modal-title
+                       | Skapa ny rapport
                 .modal-body
                     .media
                         .media-left
-                            img(style="width: 128px; padding-top:15px;", class="media-object", src="images/info/vagbom/vagbom_karta.png")
+                            img(style="width: 64px;", class="media-object", src="images/info/vagbom/vagbom_karta.png")
                         .media-body
-                            p Du kommer nu aktivera funktionen för att rapportera in information om en vägbom.
-                            p Bilden intill visar hur en vägbom ser ut eller symboliseras i kartan.
-                            p När du gör en rapportering så måste du ange vägbommens status.
-                            p Det finns tre olika alternativ för status.
-                    table.table
-                        thead
-                            tr
-                                th Status
-                                th Förklaring
-                        tbody
-                            tr
-                                td Finns
-                                td Vägbommen finns både i kartan och i verkligheten.
-                            tr
-                                td Ny vägbom
-                                td Vägbommen saknas i kartan fast den finns i verkligheten.
-                            tr
-                                td Försvunnen
-                                td Vägbommen finns i kartan men den finns inte i verkligheten.
+                            p Denna symbol markerar vägbommar i kartan.
                     //- h4 Status: Finns
                     //- p Vägbom finns i kartan men saknas i fält.
                     //- h4 Status: Saknas
                     //- p Vägbom saknas i kartan men finns i fält.
                     //- p Du har även möjligheten att ta en bild på platsen och skicka med din rapport (detta är dock helt frivilligt).
                     hr
-                    h3 Hur ser är en vägbom ut i verkligheten?
+                    h4 Vad ska jag titta efter?
                     p
                         img(class="img-responsive", style="width:50%;display:inline; padding-right: 5px;", src="images/info/vagbom/vagbom0.jpg")
                         img(class="img-responsive", style="width:50%; display:inline; padding-right: 5px;", src="images/info/vagbom/vagbom1.jpg")
@@ -222,7 +229,7 @@ block content
                     //-p Redovisas fullständingt för bilväg och sämre väg.
                     //-p Undantag för väg kortare än 250 m, uppfartsvägar och vägar inom bebyggelseområde.
                 .modal-footer
-                    button.btn.btn-success(type='button',data-dismiss='modal', id='report_modal_accept')| Acceptera
+                    button.btn.btn-success(type='button',data-dismiss='modal', id='report_modal_accept')| Börja rapportera
                     button.btn.btn-danger(type='button',data-dismiss='modal', id='report_modal_denied')| Avbryt
     .modal.fade(role='dialog', id='manual_modal')
         .modal-dialog
@@ -369,7 +376,19 @@ block content
                     h2.modal-title
                         | &nbsp; Om Lagerhanteraren
                 .modal-body
-                    p Om lagerhateraren och en liten demo.
+                    div(role='tabpanel')
+                        //- Nav tabs
+                        ul.nav.nav-tabs(role='tablist')
+                            li(role="presentation", class="active")
+                                a(href="#", role="tab", data-toggle="tab") Panel
+                            li(role="presentation")
+                                a(href="#", role="tab", data-toggle="tab") Lager
+                        div.tab-content
+                            //- #welcomeTab.tab-pane.active(role='tabpanel')
+                            //- #mapTab.tab-pane(role='tabpanel')
+                            //- #menyTab.tab-pane(role='tabpanel')
+                            //- #aboutTab.tab-pane(role='tabpanel')
+
                 .modal-footer
                     button.btn.btn-success(type='button',data-dismiss='modal', id='lagerhanteraren_modal_accept')| OK
     .modal.fade(role='dialog', id='gpsegenskaper_modal')

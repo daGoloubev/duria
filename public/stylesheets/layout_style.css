@@ -1,7 +1,15 @@
 body { overflow: hidden; }
+.navbar {padding-right: 10px;}
 .navbar-offset { margin-top: 50px; }
 #map { position: absolute; top: 50px; bottom: 0px; left: 0px; right: 0px; }
-#map .ol-zoom { font-size: 1.2em; }
+
+#map .ol-zoom { width: 41px; margin-left: -1px; font-size: 1.2em; border-radius: 4px; border: 1px solid rgba(0, 0, 0, 0.9);}
+#map .ol-zoom-in { width: 33px; height: 34px; }
+#map .ol-zoom-out { width: 33px; height: 34px; }
+
+#map .ol-rotate {width: 41px; margin-left: -1px; font-size: 1.2em; border-radius: 4px; border: 1px solid rgba(0, 0, 0, 0.9);}
+#map .ol-rotate-reset { width: 33px; height: 34px; }
+
 .zoom-top-opened-sidebar { margin-top: 5px; }
 .zoom-top-collapsed { margin-top: 45px; }
 .mini-submenu{
@@ -10,7 +18,7 @@ body { overflow: hidden; }
   border: 1px solid rgba(0, 0, 0, 0.9);
   border-radius: 4px;
   padding: 9px;
-  /*position: relative;*/
+  position: relative;
   width: 42px;
   text-align: center;
 }

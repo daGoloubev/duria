@@ -9,20 +9,24 @@ mixin navbar
                 - }
                a(class='navbar-brand visible-xs-block', href='https://duria.se')
                 i(class='fa fa-home fa-lg', aria-hidden='true')|&nbsp; Duria.se
+          // #geolocation_modal
           .collapse.navbar-collapse#meny
               ul(class='nav navbar-nav')
                   li
-                    a(href='', data-toggle='modal', data-target='#geolocation_modal', id='Min_position')
-                      i(class='fa fa-location-arrow fa-lg', aria-hidden='true')|&nbsp; Min position
+                    a(href='#', id='Min_position')
+                      i(class='fa fa-location-arrow fa-lg', aria-hidden='true') &nbsp; Min position
+                      //- data-toggle='modal', data-target='#geolocation_modal'
                   li
-                    a(href='#', data-toggle='modal', data-target='#report_modal', id='Report')
-                      i(class='fa fa-plus-square fa-lg', aria-hidden='true')|&nbsp; Rapportera
+                    a(href='#', id='Report')
+                      i(class='fa fa-plus-square fa-lg', aria-hidden='true') &nbsp; Rapportera
+                      //- #report_modal
                   li
                     a(href='#', data-toggle='modal', data-target='#urval_modal', id='single-select-button')
-                        i(class='fa fa-hand-o-up fa-lg', aria-hidden='true')|&nbsp; Urval
+                      i(class='fa fa-hand-o-up fa-lg', aria-hidden='true') &nbsp; Urval
+                      //- #urval_modal
                   li
-                      a(href='#', data-toggle='modal', data-target='#manual_modal', id='single-select-button')
-                          i(class='fa fa-book fa-lg', aria-hidden='true')|&nbsp; Manual
+                    a(href='', data-toggle='modal', data-target='#manual_modal', id='single-select-button')
+                      i(class='fa fa-question fa-lg', aria-hidden='true') &nbsp; Manual
                   //_ li(class='dropdown')
                     a(href='#', class='dropdown-toggle', data-toggle='dropdown')
                       i(class='fa fa-hand-o-up fa-lg', aria-hidden='true')|&nbsp; Urval

@@ -3,7 +3,7 @@ function applyMargins() {
     var rightToggler = $(".mini-submenu-right");
     if (leftToggler.is(":visible")) {
         $("#map .ol-zoom")
-            .css("margin-left", 0)
+            .css("margin-left", -1)
             .removeClass("zoom-top-opened-sidebar")
             .addClass("zoom-top-collapsed");
     } else {
@@ -14,7 +14,7 @@ function applyMargins() {
     }
     if (rightToggler.is(":visible")) {
         $("#map .ol-rotate")
-            .css("margin-right", 0)
+            .css("margin-right", -1)
             .removeClass("zoom-top-opened-sidebar")
             .addClass("zoom-top-collapsed");
     } else {

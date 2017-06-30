@@ -115,6 +115,10 @@ function init(){
     });
     var media_book = [];
     var start_page = 0;
+    var finns_pointsSource = new ol.source.Vector();
+    var läggtill_pointsSource = new ol.source.Vector();
+    var tabort_pointsSource = new ol.source.Vector();
+
     var pointsSource = new ol.source.Vector({
         //strategy: ol.loadingstrategy.bbox,
         strategy: ol.loadingstrategy.all,
@@ -134,6 +138,13 @@ function init(){
                             img: feature.properties.img64
                         });
                         pointsSource.addFeature(tmp);
+                        if(tmp.get('status') === 'Bekräftad'){
+                            finns_pointsSource.addFeature(tmp);
+                        } else if (tmp.get('status') === 'LäggTill'){
+                            läggtill_pointsSource.addFeature(tmp);
+                        } else if(tmp.get('status') === 'TaBort') {
+                            tabort_pointsSource.addFeature(tmp);
+                        }
                     }
                 });
                 // Create mediaBook
@@ -201,7 +212,7 @@ function init(){
             }),
             new ol.layer.Vector({
                 visible: true,
-                source: new ol.source.Vector({}),
+                source: new ol.source.Vector(),
                 name: 'Geolocation',
                 alias: 'GPS',
                 iconName: 'location-arrow'
@@ -219,18 +230,26 @@ function init(){
                             }))
                         });
                     } else {
-                        if(f.get('status') === 'Saknas'){
+                        if(f.get('status') === 'Bekräftad'){
                             return new ol.style.Style({
                                 image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                                    src: '/images/roadblocks/saknas.png',
+                                    src: '/images/roadblocks/rework_3/bekräftad.png',
                                     scale: 0.25
 
                                 }))
                             });
-                        } else {
+                        } else if(f.get('status') === 'LäggTill'){
                             return new ol.style.Style({
                                 image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                                    src: '/images/roadblocks/finns.png',
+                                    src: '/images/roadblocks/rework_3/läggtill.png',
+                                    scale: 0.25
+
+                                }))
+                            });
+                        } else if(f.get('status') === 'TaBort'){
+                            return new ol.style.Style({
+                                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                                    src: '/images/roadblocks/rework_3/tabort.png',
                                     scale: 0.25
 
                                 }))
@@ -242,6 +261,47 @@ function init(){
                 name: 'Points',
                 alias: 'Vägbommar',
                 iconName: 'exclamation-triangle'
+            }),
+            new ol.layer.Vector({
+                visible: true,
+                source: tabort_pointsSource,
+                name: 'tabort_Points',
+                style: new ol.style.Style({
+                    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                        src: '/images/roadblocks/rework_3/tabort.png',
+                        scale: 0.25
+
+                    }))
+                }),
+                alias: 'Vägbommar (Ta bort)',
+                iconName: 'minus'
+            }),
+            new ol.layer.Vector({
+                visible: true,
+                source: läggtill_pointsSource,
+                style: new ol.style.Style({
+                    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                        src: '/images/roadblocks/rework_3/läggtill.png',
+                        scale: 0.25
+                    }))
+                }),
+                name: 'läggtill_Points',
+                alias: 'Vägbommar (Lägg till)',
+                iconName: 'plus'
+            }),
+            new ol.layer.Vector({
+                visible: true,
+                source: finns_pointsSource,
+                style: new ol.style.Style({
+                    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                        src: '/images/roadblocks/rework_3/bekräftad.png',
+                        scale: 0.25
+
+                    }))
+                }),
+                name: 'finns_Points',
+                alias: 'Vägbommar (Finns)',
+                iconName: 'check'
             })
         ],
         controls: [
@@ -347,29 +407,22 @@ function init(){
             $(acc_src).text(a);
         }
         if (typeof i === 'undefined' || !i) {
-            if(f.properties.status === 'Saknas'){
-                $(img_src).prop('src', '/images/roadblocks/saknas.png');
-            } else if(f.properties.status === 'Finns') {
-                $(img_src).prop('src', '/images/roadblocks/finns.png');
-            } else {
-                $(img_src).prop('src', '/images/roadblocks/standard.png');
+            if(f.properties.status === 'Bekräftad'){
+                $(img_src).prop('src', '/images/roadblocks/rework_3/bekräftad.png');
+            } else if(f.properties.status === 'LäggTill') {
+                $(img_src).prop('src', '/images/roadblocks/rework_3/läggtill.png');
+            } else if(f.properties.status === 'TaBort'){
+                $(img_src).prop('src', '/images/roadblocks/rework_3/tabort.png');
             }
         } else {
             $(img_src).prop('src', i);
         }
     }
-    function pantopoint(){
-        view.animate({
-            center: geolocation.getPosition(),
-            zoom: 19,
-            duration: 2000
-        });
-    }
+
     function resetPropText(){
         document.getElementById('accuracy').innerHTML = 'Noggrannhet: - m';
     }
     function adjustZoom(){
-
         if(needsZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == true && neeedsZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == false){
             //zooma in
             map.getView().setCenter(geolocation.getPosition());
@@ -409,7 +462,6 @@ function init(){
     $('#popup-submit-camera').on('click', function(){
         $('#camera_modal').modal('show');
     });
-
     document.getElementById('urval_modal_accept').addEventListener('click', function(){
         if(select != null){
             map.removeInteraction(select);
@@ -430,12 +482,12 @@ function init(){
             $('#popup-content-select-tid').text(t);
             $('#popup-content-select-status').text(s);
             if (typeof i === 'undefined' || !i) {
-                if(s === 'Saknas'){
-                    $('#popup-content-select-img').prop('src', '/images/roadblocks/saknas.png');
-                } else if(s === 'Finns') {
-                    $('#popup-content-select-img').prop('src', '/images/roadblocks/finns.png');
-                } else {
-                    $('#popup-content-select-img').prop('src', '/images/roadblocks/standard.png');
+                if(s === 'Bekräftad'){
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework_3/bekräftad.png');
+                } else if(s === 'LäggTill') {
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework_3/läggtill.png');
+                } else if(s === 'TaBort'){
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework_3/tabort.png');
                 }
             } else {
                 $('#popup-content-select-img').prop('src', i);
@@ -492,28 +544,27 @@ function init(){
     document.getElementById('geolocation_modal_accept').addEventListener('click', function(){
         $('#meny').collapse('hide');
         geolocation.setTracking(true);
-        if(geolocation.getAccuracy() < 100){
-            setTimeout(function(){
-                pantopoint();
-            }, 1000);
-        } else {
-            // Anpassa kartan till acc. extent.
-            // Kill your darlings?
-            // adjustZoom();
-        }
+        view.animate({
+            center: geolocation.getPosition(),
+            zoom: 15,
+            duration: 2000
+        });
+        min_pos_info_show = true;
     });
-    document.getElementById('geolocation_modal_denied').addEventListener('click', function(){
+    $('#geolocation_modal_denied').on('click', function(){
         $('#meny').collapse('hide');
         geolocation.setTracking(false);
         resetPropText();
+        min_pos_info_show = false;
     });
-    document.getElementById('geolocation_modal_close').addEventListener('click', function(){
+    $('#geolocation_modal_close').on('click', function(){
         $('#meny').collapse('hide');
         geolocation.setTracking(false);
         resetPropText();
+        min_pos_info_show = false;
     });
     geolocation.on('change', function(){
-       document.getElementById('accuracy').innerHTML = geolocation.getAccuracy() !== undefined ? 'Noggrannhet: '+geolocation.getAccuracy() + ' m': 'Noggrannhet: - m';
+       $('#accuracy').innerHTML = geolocation.getAccuracy() !== undefined ? 'Noggrannhet: '+geolocation.getAccuracy() + ' m': 'Noggrannhet: - m';
     });
     geolocation.on('error', function(error){
         tree.showErrorMsg(error.message);
@@ -526,7 +577,68 @@ function init(){
         positionFeature.setGeometry(coordinates ? coordinates : null);
 
     });
+    /**
+     * Attach event to 'Min position'
+     * Open only once.
+     */
+    var min_pos_info_show = false;
+    $('#Min_position').on('click', function(){
+        if(min_pos_info_show){
+            view.animate({
+                center: geolocation.getPosition(),
+                zoom: view.getZoom(),
+                duration: 1000
+            });
+        } else {
+            $('#geolocation_modal').modal('show');
+        }
+    });
+    /**
+     * Attach event to 'Rapport'
+     * Open Info Rapport window only once.
+     *
+     */
+    var rapport_info_show = false;
+    $('#Report').on('click', function(){
+        if(rapport_info_show){
+            // RAPPORTERA IGEN
+            unCheckRadio();
+            drawSource.clear();
+            // CLOSE POPUP
+            submitOverlay.setPosition(undefined);
+            map.removeInteraction(draw);
+            map.addInteraction(draw);
+        } else {
+            $('#report_modal').modal('show');
+            rapport_info_show = true;
+        }
+    });
 
+    $('#popup-closer-submit').on('click', function(){
+        rapport_info_show = true;
+        unCheckRadio();
+    });
+    $('#popup-submit-cancel').on('click', function(){
+        rapport_info_show = true;
+        unCheckRadio();
+    });
+    $('#report_modal_close').on('click',function(){
+        rapport_info_show = false;
+    });
+    $('#report_modal_denied').on('click',function(){
+        rapport_info_show = false;
+    });
+
+    /**
+     * Uncheck radiobuttons
+     *
+    */
+    function unCheckRadio(){
+        document.forms["myForm"]["Finns_i_falt"][0].checked = false;
+        document.forms["myForm"]["Finns_i_falt"][1].checked = false;
+        document.forms["myForm"]["Finns_i_karta"][0].checked = false;
+        document.forms["myForm"]["Finns_i_karta"][1].checked = false;
+    }
     /**
      * EventHandling for Camera modal
      * Saving snap as base64 dataURL.
@@ -547,19 +659,21 @@ function init(){
 
     /**
      * Changing RSS page
+     *
      */
+    var rss_items = 5;
     $('#rss_previous').on('click', function(){
         if(start_page != 0){
             start_page--;
             var t = start_page + 1;
             $('#current_page').text(String(t));
             if (start_page !== media_book.length){
-                for(var i = 0 ; i < 5; i++){
+                for(var i = 0 ; i < rss_items; i++){
                     if($(String('#'+i)+'_media_post').css('display') === 'none') {
                         $(String('#'+i)+'_media_post').css('display', 'block');
                     }
                 }
-                fillMediaData(5);
+                fillMediaData(rss_items);
             }
         }
     });
@@ -570,14 +684,14 @@ function init(){
             $('#current_page').text(String(t));
             if (start_page !== media_book.length){
                 //om längden är 5
-                if(media_book.length === 5){
+                if(media_book.length === rss_items){
                     // fyll på 5
-                    fillMediaData(5);
+                    fillMediaData(rss_items);
                 } else {
                     // fyll på med resten
                     // gör resten osynliga
                     // fillMediaData(media_book.length);
-                    var rest = 5 - media_book[start_page].length;
+                    var rest = rss_items - media_book[start_page].length;
                     for(var i = 0; i < rest; i++){
                         var id = String((rest - i))+"_media_post";
                         $("#"+id).css('display', 'none');
@@ -591,14 +705,14 @@ function init(){
     /**
      * Attach events to media links
      * */
-    for(var i = 0 ; i < 5; i++){
+    for(var i = 0 ; i < rss_items; i++){
         $(String('#'+i)+'_media_post_').on('click', function(){
             var lat = $("#"+String(this.id)+'lat').text();
             var lng = $("#"+String(this.id)+'lng').text();
             var point = new ol.geom.Point(ol.proj.transform([lat, -(-lng)], 'EPSG:4326', 'EPSG:3857'));
             tree.map.getView().animate({
                 center: point.getCoordinates(),
-                zoom: 16,
+                zoom: 18,
                 duration: 2000
             });
             $(".sidebar-right .sidebar-body").toggle();
@@ -609,7 +723,14 @@ function init(){
      * Attach events to window on load
      */
     $(window).one('load',function(){
-        $('#manual_modal').modal('show');
+        // VISA MANUALEN FÖRSTA GÅNGEN
+        //$('#manual_modal').modal('show');
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia({video: true, audio: false}, function(stream) {
+            }, function(e) {
+                $('#popup-submit-camera').css('display', 'none');
+                });
+        }
     });
 }
 document.addEventListener('DOMContentLoaded', init);

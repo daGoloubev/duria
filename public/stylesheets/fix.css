@@ -1,3 +1,4 @@
+.modal-dialog{width: 90%;}
 label.list-group-item.checkbox-inline:first-child {
     margin-left: 10px;
 }
