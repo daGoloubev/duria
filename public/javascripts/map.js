@@ -151,11 +151,11 @@ function init(){
                 var step = 1;
                 var length = features.length - 1;
                 var page = [];
-                while (length > -1 ) {
+                while (length > - 1) {
                     // save last
                     var last = features[length];
                         // Add to page.
-                            if(page.length < 5){
+                            if(page.length < rss_items){
                                 page.push(last);
                             } else {
                                 media_book.push(page);
@@ -168,7 +168,7 @@ function init(){
                 }
                 media_book.push(page);
                 $('#feed_total_page_number').text(String(media_book.length));
-                fillMediaData(5)
+                fillMediaData(rss_items)
             });
         }
     });
@@ -220,46 +220,15 @@ function init(){
             new ol.layer.Vector({
                 visible: true,
                 source: pointsSource,
-                style: function(f) {
-                    if (typeof f.get('status') === 'null' || !f.get('status')) {
-                        return new ol.style.Style({
-                            image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                                src: '/images/roadblocks/standard.png',
-                                scale: 0.25
+                style: new ol.style.Style({
+                    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                        src: '/images/roadblocks/rework/standard.png',
+                        scale: 0.25
 
-                            }))
-                        });
-                    } else {
-                        if(f.get('status') === 'Bekräftad'){
-                            return new ol.style.Style({
-                                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                                    src: '/images/roadblocks/rework_3/bekräftad.png',
-                                    scale: 0.25
-
-                                }))
-                            });
-                        } else if(f.get('status') === 'LäggTill'){
-                            return new ol.style.Style({
-                                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                                    src: '/images/roadblocks/rework_3/läggtill.png',
-                                    scale: 0.25
-
-                                }))
-                            });
-                        } else if(f.get('status') === 'TaBort'){
-                            return new ol.style.Style({
-                                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                                    src: '/images/roadblocks/rework_3/tabort.png',
-                                    scale: 0.25
-
-                                }))
-                            });
-                        }
-                    }
-                    return;
-                },
+                    }))
+                }),
                 name: 'Points',
-                alias: 'Vägbommar',
+                alias: 'Vägbommar (Alla)',
                 iconName: 'exclamation-triangle'
             }),
             new ol.layer.Vector({
@@ -268,11 +237,12 @@ function init(){
                 name: 'tabort_Points',
                 style: new ol.style.Style({
                     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                        src: '/images/roadblocks/rework_3/tabort.png',
+                        src: '/images/roadblocks/rework/tabort.png',
                         scale: 0.25
 
                     }))
                 }),
+                name: 'tabort_Points',
                 alias: 'Vägbommar (Ta bort)',
                 iconName: 'minus'
             }),
@@ -281,7 +251,7 @@ function init(){
                 source: läggtill_pointsSource,
                 style: new ol.style.Style({
                     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                        src: '/images/roadblocks/rework_3/läggtill.png',
+                        src: '/images/roadblocks/rework/läggtill.png',
                         scale: 0.25
                     }))
                 }),
@@ -294,7 +264,7 @@ function init(){
                 source: finns_pointsSource,
                 style: new ol.style.Style({
                     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                        src: '/images/roadblocks/rework_3/bekräftad.png',
+                        src: '/images/roadblocks/rework/bekräftad.png',
                         scale: 0.25
 
                     }))
@@ -307,8 +277,11 @@ function init(){
         controls: [
             //new ol.control.MousePosition({
             //   coordinateFormat: function (coordinates) {
-            //        var x = coordinates[0].toFixed(3);
-            //        var y = coordinates[1].toFixed(3);
+            //        //var x = coordinates[0].toFixed(3);
+            //        //var y = coordinates[1].toFixed(3);
+            //       var x = coordinates[0];
+            //       var y = coordinates[1];
+            //       //console.log(x + ' ' + y);
             //        return x + ' ' + y;
             //        //var t = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
             //        //var sf = ol.coordinate.createStringXY(2);
@@ -408,11 +381,11 @@ function init(){
         }
         if (typeof i === 'undefined' || !i) {
             if(f.properties.status === 'Bekräftad'){
-                $(img_src).prop('src', '/images/roadblocks/rework_3/bekräftad.png');
+                $(img_src).prop('src', '/images/roadblocks/rework/bekräftad.png');
             } else if(f.properties.status === 'LäggTill') {
-                $(img_src).prop('src', '/images/roadblocks/rework_3/läggtill.png');
+                $(img_src).prop('src', '/images/roadblocks/rework/läggtill.png');
             } else if(f.properties.status === 'TaBort'){
-                $(img_src).prop('src', '/images/roadblocks/rework_3/tabort.png');
+                $(img_src).prop('src', '/images/roadblocks/rework/tabort.png');
             }
         } else {
             $(img_src).prop('src', i);
@@ -462,6 +435,11 @@ function init(){
     $('#popup-submit-camera').on('click', function(){
         $('#camera_modal').modal('show');
     });
+    /**
+     * Accept Urval model
+     * Does not excists any more.
+     */
+    /**
     document.getElementById('urval_modal_accept').addEventListener('click', function(){
         if(select != null){
             map.removeInteraction(select);
@@ -470,10 +448,26 @@ function init(){
         map.addInteraction(select);
         $('#meny').collapse('hide');
     });
+    */
     selectSingleClick.on('select', function(evt){
+            closeSelect();
             var f = evt.selected[0];
             var c = f.getGeometry().getCoordinates();
             selectOverlay.setPosition(c);
+            // TODO :: Räkna ut OFFSET
+            if(windowWidth <= 360){
+                // Small devices
+                var x_offset = 70;
+                var y_offset = 400;
+                view.centerOn(c, map.getSize(), [x_offset, y_offset]);
+            } else if(windowWidth <= 480){
+                var x_offset = 120;
+                var y_offset = 500;
+                view.centerOn(c, map.getSize(), [x_offset, y_offset]);
+            } else {
+                //Desktop 1920
+                view.setCenter(c);
+            }
             var d = f.get('date');
             var t = f.get('tid');
             var s = f.get('status');
@@ -483,11 +477,11 @@ function init(){
             $('#popup-content-select-status').text(s);
             if (typeof i === 'undefined' || !i) {
                 if(s === 'Bekräftad'){
-                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework_3/bekräftad.png');
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework/bekräftad.png');
                 } else if(s === 'LäggTill') {
-                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework_3/läggtill.png');
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework/läggtill.png');
                 } else if(s === 'TaBort'){
-                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework_3/tabort.png');
+                    $('#popup-content-select-img').prop('src', '/images/roadblocks/rework/tabort.png');
                 }
             } else {
                 $('#popup-content-select-img').prop('src', i);
@@ -511,6 +505,7 @@ function init(){
         $('#meny').collapse('hide');
     });
     draw.on('drawend', function(evt){
+        closeSelect();
         var c = evt.feature.getGeometry().getCoordinates();
         var t = ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
         var db_format = ol.coordinate.createStringXY(13);
@@ -546,7 +541,7 @@ function init(){
         geolocation.setTracking(true);
         view.animate({
             center: geolocation.getPosition(),
-            zoom: 15,
+            zoom: 18,
             duration: 2000
         });
         min_pos_info_show = true;
@@ -661,7 +656,7 @@ function init(){
      * Changing RSS page
      *
      */
-    var rss_items = 5;
+    var rss_items = 3; // Holds the number of items per page.
     $('#rss_previous').on('click', function(){
         if(start_page != 0){
             start_page--;
@@ -731,7 +726,77 @@ function init(){
                 $('#popup-submit-camera').css('display', 'none');
                 });
         }
+        /**
+         * Add Select Interaction to map.
+         */
+        if(select != null){
+            map.removeInteraction(select);
+        }
+        select = selectSingleClick;
+        map.addInteraction(select);
     });
+    /**
+     * EventListner is Vägbommar (Finns) Visible?
+     */
+    var points_layer;
+    var check_layer;
+    var add_layer;
+    var sub_layer;
+    map.getLayers().forEach(function (layer) {
+        if(layer.get('name') == 'Points'){
+            points_layer = layer;
+        } else if (layer.get('name') == 'finns_Points'){
+            check_layer = layer;
+        } else if (layer.get('name') == 'läggtill_Points'){
+            add_layer = layer;
+        } else if (layer.get('name') == 'tabort_Points'){
+            sub_layer = layer;
+        }
+        layer.on('change:visible', function(){
+           if(this.get('name') == 'finns_Points' && this.getVisible() == false && points_layer.getVisible() == true){
+               if(add_layer.getVisible != false && sub_layer.getVisible() != false){
+                   points_layer.setVisible(false);
+                   $('.Points_checkbox').prop('checked', false);
+               }
+           } else if(this.get('name') == 'läggtill_Points' && this.getVisible() == false && points_layer.getVisible() == true){
+               if(check_layer.getVisible != false && sub_layer.getVisible() != false){
+                   points_layer.setVisible(false);
+                   $('.Points_checkbox').prop('checked', false);
+               }
+           } else if(this.get('name') == 'tabort_Points' && this.getVisible() == false && points_layer.getVisible() == true){
+               if(sub_layer.getVisible != false && add_layer.getVisible() != false){
+                   points_layer.setVisible(false);
+                   $('.Points_checkbox').prop('checked', false);
+               }
+           }
+        });
+    })
+    /**
+     * Double click event
+     */
+    $('#map').dblclick(function(){
+        closeSelect();
+    });
+    /**
+     * Double Tap
+     */
+    var tapped=false
+    $("#map").on("touchstart",function(e){
+        if(!tapped){
+            tapped=setTimeout(function(){
+                // single tap
+                tapped=null
+            },300); //wait 300ms
+        } else {
+            clearTimeout(tapped);
+            tapped=null
+            // double tap
+            closeSelect();
+        }
+        e.preventDefault()
+    });
+
+
 }
 document.addEventListener('DOMContentLoaded', init);
 

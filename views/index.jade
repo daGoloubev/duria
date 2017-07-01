@@ -90,10 +90,10 @@ block content
         #popup-content-select
             .media
                 .media-left
-                    img(src='/images/roadblocks/standard.png', style="width: 128px; height: 128px;", id="popup-content-select-img")
+                    img(src='/images/roadblocks/standard.png', style="width: 128px; height: 128px; margin-top: 30px;", id="popup-content-select-img")
                 .media-right(style="width: 300px; padding: 0px;")
                     h4.media-heading Information
-                    table.table(style="width: 200px; margin-bottom: 0px;")
+                    table.table(style="width: 150px; margin-bottom: 0px;")
                       tr
                         th Datum
                         td#popup-content-select-date
@@ -103,6 +103,12 @@ block content
                       tr
                         th Status
                         td#popup-content-select-status
+                      tr
+                        th Verklig
+                        td#popup-content-finns_i_verkligheten
+                      tr
+                        th Karta
+                        td#popup-content-finns_i_karta
     +em
     +camera('camera_modal', 'Kamera')
     +info_modal('status_modal', 'Rapport kan inte skickas', 'Applikationen kan endast skicka en rapport om båda frågorna är besvarade och om båda svaren inte är nej.')
@@ -156,7 +162,8 @@ block content
                     button.btn.btn-success(type='button',data-dismiss='modal', id='geolocation_modal_accept')| Ja
                     button.btn.btn-danger(type='button',data-dismiss='modal', id='geolocation_modal_denied')| Avbryt
     //- +info_modal('urval_modal', 'Urval', 'Du kommer nu få möjligheten att hämta information om redan inrapporterade vägbommar genom att klicka på dessa i kartan.')
-    .modal.fade(role='dialog', id='urval_modal')
+    // FLYTTAS TILL MANUAL
+    //-.modal.fade(role='dialog', id='urval_modal')
         .modal-dialog
             .modal-content
                 .modal-header
