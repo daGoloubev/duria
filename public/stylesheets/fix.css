@@ -22,3 +22,6 @@ label.list-group-item.checkbox-inline:first-child {
 #popup-submit-submit{
     margin-bottom: 4px;
 }
+.fixed-width {
+    width: 250px;
+}

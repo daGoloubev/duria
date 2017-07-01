@@ -50,15 +50,15 @@ var layerTree =  function(options){
           layer_range.setAttribute('max', '1');
           layer_range.setAttribute('step', '0.01');
           var range_txt = document.createElement('h4');
-          range_txt.innerHTML = 'Transparans: 100%';
+          range_txt.innerHTML = 'Transparent: 100%';
 
           layer_range.addEventListener('input', function(){
               layer.setOpacity(this.value);
-              range_txt.innerHTML = 'Transparans: '+Math.floor(this.value*100)+'%';
+              range_txt.innerHTML = 'Transparent: '+Math.floor(this.value*100)+'%';
           });
           layer_range.addEventListener('change', function(){
               layer.setOpacity(this.value);
-              range_txt.innerHTML = 'Transparans: '+Math.floor(this.value*100)+'%';
+              range_txt.innerHTML = 'Transparent: '+Math.floor(this.value*100)+'%';
           });
 
           layer_content.appendChild(range_txt);
@@ -77,6 +77,7 @@ layerTree.prototype.showErrorMsg = function(txt){
     document.getElementById('em_model_body').innerHTML = txt;
     $('#em_model').modal('show');
 };
+var layersOpen = false;
 function init(){
     document.removeEventListener('DOMContentLoaded', init);
     ////////////////////////// VARIABLES ///////////////////////////////////
@@ -291,7 +292,6 @@ function init(){
         ],
         view: view
     });
-    // var tree = ...
     var tree = new layerTree({map: map, target: 'layers'});
     map.getLayers().forEach(function(l){
         if(l.get('name'))
@@ -338,7 +338,15 @@ function init(){
     var select = null;
     var selectSingleClick = new ol.interaction.Select({
         layers: function(layer){
-            return layer.get('name') == 'Points';
+            if(layer.get('name') == 'Points'){
+                return layer.get('name') == 'Points';
+            } else if(layer.get('name') == 'tabort_Points'){
+                return layer.get('name') == 'tabort_Points';
+            } else if(layer.get('name') == 'läggtill_Points'){
+                return layer.get('name') == 'läggtill_Points';
+            } else if(layer.get('name') == 'finns_Points'){
+                return layer.get('name') == 'finns_Points';
+            }
         }
     });
 
@@ -395,29 +403,6 @@ function init(){
     function resetPropText(){
         document.getElementById('accuracy').innerHTML = 'Noggrannhet: - m';
     }
-    function adjustZoom(){
-        if(needsZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == true && neeedsZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == false){
-            //zooma in
-            map.getView().setCenter(geolocation.getPosition());
-            map.getView().setZoom(map.getView().getZoom() + Math.pow(0.15,2));
-            thread = setTimeout(function(){ adjustZoom(); }, 1);
-        } else if (needsZoomIN(map, geolocation.getAccuracyGeometry().getExtent()) == false && neeedsZoomOUT(map, geolocation.getAccuracyGeometry().getExtent()) == true){
-            //zooma ut
-            map.getView().setCenter(geolocation.getPosition());
-            map.getView().setZoom(map.getView().getZoom() - Math.pow(0.15,2));
-            thread = setTimeout(function(){ adjustZoom(); }, 1);
-        } else {
-            clearTimeout(thread);
-        }
-    }
-    function needsZoomIN(map, vector){
-        var map = map.getView().calculateExtent(map.getSize());
-        return ol.extent.containsExtent(map, vector);
-    }
-    function neeedsZoomOUT(map, vector){
-        var map = map.getView().calculateExtent(map.getSize());
-        return ol.extent.containsExtent(vector, map);
-    }
     function closeSubmit(){
         submitOverlay.setPosition(undefined);
         submitCloser.blur;
@@ -436,42 +421,41 @@ function init(){
         $('#camera_modal').modal('show');
     });
     /**
-     * Accept Urval model
-     * Does not excists any more.
+     *  Calculate new marginX
      */
-    /**
-    document.getElementById('urval_modal_accept').addEventListener('click', function(){
-        if(select != null){
-            map.removeInteraction(select);
-        }
-        select = selectSingleClick;
-        map.addInteraction(select);
-        $('#meny').collapse('hide');
-    });
-    */
+    function getMarginX(windowWidth, popupWidth){
+        var halfWidth = windowWidth / 2;
+        var actualSize = halfWidth + popupWidth;
+        var popupMargin = windowWidth - actualSize;
+        return popupMargin / 2;
+    }
     selectSingleClick.on('select', function(evt){
             closeSelect();
+            $('.navbar-collapse').collapse('hide');
             var f = evt.selected[0];
             var c = f.getGeometry().getCoordinates();
             selectOverlay.setPosition(c);
-            // TODO :: Räkna ut OFFSET
-            if(windowWidth <= 360){
-                // Small devices
-                var x_offset = 70;
-                var y_offset = 400;
-                view.centerOn(c, map.getSize(), [x_offset, y_offset]);
-            } else if(windowWidth <= 480){
-                var x_offset = 120;
-                var y_offset = 500;
-                view.centerOn(c, map.getSize(), [x_offset, y_offset]);
+            if(windowWidth < 1200 && !layersOpen){
+                view.centerOn(c, map.getSize(), [getMarginX(windowWidth, 50), 400]);
+            } else if(windowWidth < 1200 && layersOpen){
+                view.centerOn(c, map.getSize(), [400, 400]);
             } else {
-                //Desktop 1920
                 view.setCenter(c);
             }
             var d = f.get('date');
             var t = f.get('tid');
             var s = f.get('status');
             var i = f.get('img');
+            if(s === 'Bekräftad'){
+                $('#popup-content-finns_i_verkligheten').text('Ja');
+                $('#popup-content-finns_i_karta').text('Ja');
+            } else if(s === 'LäggTill'){
+                $('#popup-content-finns_i_verkligheten').text('Ja');
+                $('#popup-content-finns_i_karta').text('Nej');
+            } else if(s === 'TaBort'){
+                $('#popup-content-finns_i_verkligheten').text('Nej');
+                $('#popup-content-finns_i_karta').text('Ja');
+            }
             $('#popup-content-select-date').text(d);
             $('#popup-content-select-tid').text(t);
             $('#popup-content-select-status').text(s);
@@ -570,7 +554,6 @@ function init(){
     geolocation.on('change:position', function() {
         var coordinates = new ol.geom.Point(ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326'));
         positionFeature.setGeometry(coordinates ? coordinates : null);
-
     });
     /**
      * Attach event to 'Min position'
@@ -712,6 +695,7 @@ function init(){
             });
             $(".sidebar-right .sidebar-body").toggle();
             $('.mini-submenu-right').toggle();
+            applyMargins();
         });
     }
     /**
@@ -719,7 +703,7 @@ function init(){
      */
     $(window).one('load',function(){
         // VISA MANUALEN FÖRSTA GÅNGEN
-        //$('#manual_modal').modal('show');
+        $('#manual_modal').modal('show');
         if (navigator.getUserMedia) {
             navigator.getUserMedia({video: true, audio: false}, function(stream) {
             }, function(e) {
@@ -753,6 +737,7 @@ function init(){
             sub_layer = layer;
         }
         layer.on('change:visible', function(){
+           closeSelect();
            if(this.get('name') == 'finns_Points' && this.getVisible() == false && points_layer.getVisible() == true){
                if(add_layer.getVisible != false && sub_layer.getVisible() != false){
                    points_layer.setVisible(false);

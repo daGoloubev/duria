@@ -18,6 +18,7 @@ html(lang="se")
     //- link(rel='stylesheet', href='/stylesheets/fix.css' integrity='sha256-8s0rb+Yb0SIFGyzxybgYZwS/nfq+V/ZKRKLcM/9Mv0k=', crossorigin='anonymus')
     link(rel='stylesheet', href='/stylesheets/fix.css')
     link(rel='stylesheet', href='/stylesheets/popup.css')
+    link(rel='stylesheet', href='/stylesheets/modal_manual.css')
     block favicon
       +favicon
     script(type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/p5.js" integrity="sha384-54hC88ASWStHTWO6cD/wH7PQ5LjJnpvMWdMogl6uNZ4B2WMuaLagQXDQavbIKbf9" crossorigin="anonymous")
@@ -43,7 +44,10 @@ html(lang="se")
         var falt = document.forms["myForm"]["Finns_i_falt"].value;
         var karta = document.forms["myForm"]["Finns_i_karta"].value;
         var status = $('#hidden_output_to_db');
-        if (falt == "" && karta == "" || falt == "" && karta != "" || falt != "" && karta == "" || falt == "" && karta == "Nej" || falt == "Nej") {
+        if (    falt == "" && karta == "" ||
+                falt == "" && karta != "" ||
+                falt != "" && karta == "" ||
+                karta == "Nej" && falt == "Nej") {
             $('#status_modal').modal('show');
             return false;
         } else if (karta == 'Ja' && falt == 'Ja'){

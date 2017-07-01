@@ -112,13 +112,9 @@ block content
     +em
     +camera('camera_modal', 'Kamera')
     +info_modal('status_modal', 'Rapport kan inte skickas', 'Applikationen kan endast skicka en rapport om båda frågorna är besvarade och om båda svaren inte är nej.')
-
     +confirm_modal('bekräfta_modal', 'Intyg', 'Stämmer det att vägbommen finns i verkligheten och i kartan?')
     +confirm_modal('läggtill_modal', 'Intyg', 'Stämmer det att vägbommen finns i verkligheten och att vägbommen inte finns kartan?')
     +confirm_modal('tabort_modal', 'Intyg', 'Stämmer det att vägbommen saknas i verkligheten och att vägbommen finns i kartan?')
-
-    //- +confirm_modal('inofficiell_modal', 'Intyg', 'Stämmer det att vägbommen saknas i verkligheten och att vägbommen saknas i kartan?')
-    //- +info_modal('geolocation_modal', 'Geolocation', 'Applikationen kommer nu att använda oss av er inbyggda GPS sensor för att ta reda på er position och förflytta er till den delen av kartan.')
     .modal.fade(role='dialog', id='geolocation_modal')
         .modal-dialog
             .modal-content
@@ -128,78 +124,9 @@ block content
                         | Min Position
                 .modal-body
                     p Är du säker på att du vill aktivera 'Min Position'?
-                    //p Applikationen kommer nu att försöka hämta din position m.h.a GPS (Global Positiong System).
-                    //p Varje GPS mätning skapar en parameter som heter noggrannhet.
-                    //p Noggrannheten används för att representera GPS signalen i applikationen som en blå cirkel.
-                    //-.media
-                         .media-left
-                             img(style="width: 128px;", class="media-object", src="images/info/layer_handler.png")
-                         .media-body
-                             h4.media-heading Lagerhanteraren
-                             p Det går att stänga av GPS symbolen via lagerhanteraren som finns i kartan.
-                             p Du kan också se din aktuella noggrannhet via lagerhanteraren och undermenyn GPS Egenskaper.
-                    //-hr
-                    //-.media
-                         .media-left
-                             img(style="width: 126px;", class="media-object", src="images/info/GPS_high.png")
-                         .media-body
-                             h4.media-heading Hög noggrannhet
-                             p Det finns ett antal orsaker till att GPS noggrannheten är hög.
-                             p Exempelvis:
-                                 ul
-                                    li Din position är inomhus eller under ett tak.
-                                    li Din position är nära ett föremål exemplivis träd, höga byggnader som blockerar GPS signalen
-                                    li Oftast beror hög noggrannhet på att positionen befinner sig vid en stationär enhet.
-                                    li Noggrannheten kan också manipuleras av en VPN (Virtual Private Network) tjänst
-                                    li Din ISP (Internet Service Provider) dvs. internetleverantör kan också förvränga GPS noggrannheten.
-                    //-.media
-                         .media-left
-                             img(style="width: 126px;", class="media-object", src="images/info/GPS_low.png")
-                         .media-body
-                             h4.media-heading Låg noggrannhet
-                             p Om noggrannehten är låg så kan du följa din position i kartan om du förflyttar dig exempelvis.
                 .modal-footer
                     button.btn.btn-success(type='button',data-dismiss='modal', id='geolocation_modal_accept')| Ja
                     button.btn.btn-danger(type='button',data-dismiss='modal', id='geolocation_modal_denied')| Avbryt
-    //- +info_modal('urval_modal', 'Urval', 'Du kommer nu få möjligheten att hämta information om redan inrapporterade vägbommar genom att klicka på dessa i kartan.')
-    // FLYTTAS TILL MANUAL
-    //-.modal.fade(role='dialog', id='urval_modal')
-        .modal-dialog
-            .modal-content
-                .modal-header
-                    button.close(type='button',data-dismiss='modal', id='urval_modal_close') &times;
-                    h2.modal-title
-                        | &nbsp; Urval
-                .modal-body
-                     p Du kommer nu att aktivera urvalsfunktionen vilket tillåter dig att hämta information om en vägbom genom att klicka dess ikon i kartan.
-                     p Det går endast att klicka på en vägbom i taget.
-                     p Efter ett framgångsrikt klick bekräftas urvalet genom att en popup ruta öppnas med information om aktuell vägbom.
-                     hr
-                     h4 Symboler
-                     .media
-                          .media-left
-                              img(style="width: 64px; height: 64px", class="media-object", src="images/roadblocks/finns.png")
-                          .media-body
-                              h4.media-heading Vägbom finns
-                              p Denna ikon betyder att en vägbom finns i kartan men saknas i fält.
-                     .media
-                          .media-left
-                              img(style="width: 64px; height: 64px", class="media-object", src="images/roadblocks/saknas.png")
-                          .media-body
-                              h4.media-heading Vägbom saknas
-                              p Denna ikon betyder att en vägbom finns i fält men saknas i kartan.
-                     .media
-                          .media-left
-                              img(style="width: 64px; height: 64px", class="media-object", src="images/info/rss_handler.png")
-                          .media-body
-                              h4.media-heading Senast inrapporterade
-                              p När du klickar på denna ikon i kartan så öppnas det upp en historik.
-                              p I den kan du se senast inrapporterade.
-                              p Om du vill navigera till den positionen klicka då på ikonen eller bilden bredvid positions informationen.
-                .modal-footer
-                    button.btn.btn-success(type='button',data-dismiss='modal', id='urval_modal_accept')| Acceptera
-                    button.btn.btn-danger(type='button',data-dismiss='modal', id='urval_modal_denied')| Avbryt
-    //- +info_modal('report_modal', 'Rapportera', 'Du kommer nu aktivera funktionen att rapportera in vägbommar genom att klicka i kartan.')
     .modal.fade(role='dialog', id='report_modal')
         .modal-dialog
             .modal-content
@@ -213,28 +140,12 @@ block content
                             img(style="width: 64px;", class="media-object", src="images/info/vagbom/vagbom_karta.png")
                         .media-body
                             p Denna symbol markerar vägbommar i kartan.
-                    //- h4 Status: Finns
-                    //- p Vägbom finns i kartan men saknas i fält.
-                    //- h4 Status: Saknas
-                    //- p Vägbom saknas i kartan men finns i fält.
-                    //- p Du har även möjligheten att ta en bild på platsen och skicka med din rapport (detta är dock helt frivilligt).
                     hr
                     h4 Vad ska jag titta efter?
                     p
                         img(class="img-responsive", style="width:50%;display:inline; padding-right: 5px;", src="images/info/vagbom/vagbom0.jpg")
                         img(class="img-responsive", style="width:50%; display:inline; padding-right: 5px;", src="images/info/vagbom/vagbom1.jpg")
                     p Mittpunkt för permanent avstängning av enskild väg som kan bestå av vägbom, kedja, wire (låsta eller tillfälligt öppna).
-
-                    //- p Nedan följer en detaljerad specifikation.
-                    //-hr
-                    //-h3 Vägbom
-                    //-h4 Definition
-                    //-p Permanent konstruktion som används för att avstänga väg för obehörig trafik.
-                    //-h4 Beskrivning
-                    //-p Mittpunkt för permanent avstängning av enskild väg som kan bestå av vägbom, kedja, wire (låsta eller tillfälligt öppna).
-                    //-h4 Urval
-                    //-p Redovisas fullständingt för bilväg och sämre väg.
-                    //-p Undantag för väg kortare än 250 m, uppfartsvägar och vägar inom bebyggelseområde.
                 .modal-footer
                     button.btn.btn-success(type='button',data-dismiss='modal', id='report_modal_accept')| Börja rapportera
                     button.btn.btn-danger(type='button',data-dismiss='modal', id='report_modal_denied')| Avbryt
@@ -252,126 +163,185 @@ block content
                             li(role="presentation", class="active")
                                 a(href="#welcomeTab", role="tab", data-toggle="tab") Välkommen
                             li(role="presentation")
+                                a(href="#menyTab", role="tab", data-toggle="tab") Navigationsmenyn
+                            li(role="presentation")
                                 a(href="#mapTab", role="tab", data-toggle="tab") Kartvy
-                            li(role="presentation")
-                                a(href="#menyTab", role="tab", data-toggle="tab") Menyraden
-                            li(role="presentation")
-                                a(href="#aboutTab", role="tab", data-toggle="tab") Information om applikation.
                         div.tab-content
                             #welcomeTab.tab-pane.active(role='tabpanel')
-                                br
-                                p Välkomna till vår applikation för insamling av vägbommar i Gävle-området!
-                                p Mer information om studien som applikationen är en del av finns i slutet av denna introduktion.
+                                .media(style="margin-top:10px;")
+                                    .media-body
+                                        p Välkomna till duria.se en applikation för insamling av vägbommar!
+                                        p Applikationen är utformat som del av ett examensarbete om 15 hp vid Högskolan i Gävle.
+                                        p Studiens underlag är delvis baserad på uppdragsbeskrivningen från Lantmäteriet i Gävle.
+                                        p För mer information om applikationen eller studien, kontakta någon av studiens författare:
+                                        a(href="mailto:danielgoloubev@gmail.com") Daniel Rasmussen
+                                        br
+                                        a(href="mailto:ofk14sus@student.hig.se") Sebastian Udenius
                             #mapTab.tab-pane(role='tabpanel')
                                 ul.nav.nav-tabs(role='tablist')
                                     li(role="presentation", class="active")
                                         a(href="#layersTab", role="tab", data-toggle="tab") Lager
                                     li(role="presentation")
-                                        a(href="#controllersTab", role="tab", data-toggle="tab") Kontroller
+                                        a(href="#gisfunktionerTab", role="tab", data-toggle="tab") GIS funktioner
+                                    li(role="presentation")
+                                        a(href="#kartfunktionerTab", role="tab", data-toggle="tab") Kartfunktioner
                                 div.tab-content
                                     #layersTab.tab-pane.active(role='tabpanel')
-                                        br
+                                        .media(style="margin-top:10px;")
+                                            .media-left
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/rework/Layers/webb_karta_layer.png")
+                                            .media-body
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#webb_karta_layer") Webbkarta
+                                                #webb_karta_layer.collapse
+                                                    br
+                                                    ul
+                                                        li Ett lager som kombinerar Ortofoto och Topografisk webbkarta.
+                                                        li Kartunderlag från Lantmäteriet.
                                         .media
                                             .media-left
-                                                img(style="width: 128px; ", class="media-object", src="images/info/lant.png")
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/rework/Layers/gps_layer.png")
                                             .media-body
-                                                ul
-                                                    li Topografisk webbkarta
-                                                    li Ortofoto
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#gps_layer") GPS
+                                                #gps_layer.collapse
+                                                    br
+                                                    ul
+                                                        li GPS signalen symboliseras som en cirkel i kartan.
+                                                        li Hög noggrannhet ger större cirkel.
+                                                        li Låg noggrannhet ger mindre cirkel.
+                                        .media
+                                            .media-left
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/rework/Layers/vägbom_layer.png")
+                                            .media-body
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#vagbom_layer") Vägbommar (Alla)
+                                                #vagbom_layer.collapse
+                                                    br
+                                                    ul
+                                                        li Innehåller alla vägbommar
+                                                        li Alla vägbommar som finns i verkligheten och i kartan
                                         hr
+                                        h4 Funktioner
                                         .media
                                             .media-left
-                                                 img(style="width: 128px; height: 128px", class="media-object", src="images/info/osm.png")
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/rework/Layers/onoff_layer.png")
                                             .media-body
-                                                 p Applikationen innehåller en karta som är hämtad från
-                                                     a(href="https://www.openstreetmap.org/copyright)") OpenStreetMap-projektet
-                                                 p Det är möjligt att dra runt i kartan, zooma in/ut (genom “pinch-to-zoom” med pekskärm eller “scrolla” med mus) och rotera kartan (på vissa enheter).
-                                        hr
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#onoff_layer") Av/På
+                                                #onoff_layer.collapse
+                                                    br
+                                                    ul
+                                                        li Stänger av detta lager.
+                                                        li Aktiverar detta lager
                                         .media
                                             .media-left
-                                                img(style="width: 128px; height: 128px", class="media-object", src="images/info/bing.jpg")
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/rework/Layers/trans.png")
                                             .media-body
-                                                p Info text om Bing maps
-                                    #controllersTab.tab-pane(role='tabpanel')
-                                        br
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#trans") Transparens
+                                                #trans.collapse
+                                                    br
+                                                    ul
+                                                        li Gör lagret transparent eller genomskinligt.
+                                    #gisfunktionerTab.tab-pane(role='tabpanel')
+                                        .media(style="margin-top:10px;")
+                                            .media-left
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/layer_handler.png")
+                                            .media-body
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#lagerhanterare_layer") Lagerhanteraren
+                                                #lagerhanterare_layer.collapse
+                                                    br
+                                                    ul
+                                                        li Lagrar alla lager.
+                                                        li Lagrar GPS Egenskaper.
+                                                        li Går att göra mindre om man klickar på Lagerhanteraren.
+                                                        li Går att göra mindre om man klickar på GPS Egenskaper.
+                                        .media(style="margin-top:10px;")
+                                            .media-left
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/rss_handler.png")
+                                            .media-body
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#rss_handler") Senaste
+                                                #rss_handler.collapse
+                                                    br
+                                                    ul
+                                                        li Innehåller de 3 senaste inrapporterade vägbommarna.
+                                                        li Varje sida innehåller 3 st vägbommar.
+                                                        li Går att göra mindre om man klickar på Senaste.
+                                                        li Klicka på ikonen eller bilden och du kommer att ta dig till den positionen.
+
+                                    #kartfunktionerTab.tab-pane(role='tabpanel')
+                                        .media(style="margin-top:10px;")
+                                            .media-left
+                                                img(style="width: 32px; height: 64px", class="media-object", src="images/info/rework/Layers/zoom_layer.png")
+                                            .media-body
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#zoom_function") Zoom
+                                                #zoom_function.collapse
+                                                    br
+                                                    ul
+                                                        li Klicka på plus för att zomma in.
+                                                        li Klicka på minus för att zooma out.
+                                                        li Dubbel klicka i kartan för att zomma in.
+                                                        li Dra med två fingrar för att zomma in.
                                         .media
                                             .media-left
-                                                img(style="width: 128px; height: 128px", class="media-object", src="images/info/layer_handler.png")
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/rework/Layers/rotate_layer.png")
                                             .media-body
-                                                 p Knappen längst upp till vänster i kartvyn (som innehåller fyra vågräta streck) öppnar en inställningspanel för lagerna som visas i kartvyn.
-                                                 p Denna inställningspanel rekommenderas enbart för avancerade användare.
-                                        hr
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#rotate_function") Rotera
+                                                #rotate_function.collapse
+                                                    br
+                                                    ul
+                                                        li Vrid med båda fingrarna i kartan
+                                                        li Håll in Alt-Shift om du använder ett tangetbord.
+                                                        li Klicka på ikonen igen för att återställa rotationen.
                                         .media
                                             .media-left
-                                                img(style="width: 128px; height: 128px", class="media-object", src="images/info/rss_handler.png")
+                                                img(style="width: 32px; height: 32px", class="media-object", src="images/info/urval.png")
                                             .media-body
-                                                p Knappen längst upp till höger (som innehåller tre streck i en kvartscirkel) öppnar en panel med de senaste registreringarna som har gjorts av applikationens användare.
-                                        hr
-                                        .media
-                                            .media-left
-                                                img(style="width: 64px; height: 128px", class="media-object", src="images/info/zoom.png")
-                                            .media-body
-                                                p De två knapparna under den föregående knappen (som innehåller ett plus- och ett minustecken) zoomar in/ut i kartan.
-                                        hr
-                                        .media
-                                            .media-left
-                                                img(style="width: 128px; height: 128px", class="media-object", src="images/info/rotate.png")
-                                            .media-body
-                                                p Om kartan har roteras finns det en knapp under föregående knappen (som innehåller en pil) som återställer kartans rotering till ursprungsvärdet (så att norr är uppåt).
+                                                button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#urval_function") Urval
+                                                #urval_function.collapse
+                                                    br
+                                                    ul
+                                                        li Klicka på vägbomsikonerna för att få upp en information.
+                                                        li Vägbommar som finns i kartan och i verkligheten har status bekräftad och finns samlade i vägbommslagret "Vägbommar (Finns)" i lagerhanteraren.
+                                                        img(style="width: 32px; height: 32px", class="media-object", src="images/roadblocks/rework/bekräftad.png")
+                                                        li Vägbommar som finns i verkligheten men saknas i kartan dessa har status LäggTill och finns samlade i vägbommslagret "Vägbommar (Lägg till)" i lagerhanteraren.
+                                                        img(style="width: 32px; height: 32px", class="media-object", src="images/roadblocks/rework/läggtill.png")
+                                                        li Vägbommar som inte finns i verkligheten men finns i kartan dessa har status TaBort och finns samlade i vägbommslagret "Vägbommar (Ta Bort)" i lagerhanteraren.
+                                                        img(style="width: 32px; height: 32px", class="media-object", src="images/roadblocks/rework/tabort.png")
+                                                        li Alla vägbommar symboliseras på samma sätt finns i samlade i vägbommslagret "Vägbommar (Alla)" i lagerhanteraren.
+                                                        img(style="width: 32px; height: 32px", class="media-object", src="images/roadblocks/rework/standard.png")
                             #menyTab.tab-pane(role='tabpanel')
-                                br
-                                .media
-                                    .media-middle
-                                        img(class="media-object", src="images/info/meny_stor.png")
+                                .media(style="margin-top:10px;")
+                                    .media-left
+                                        img(style="width: 32px; height: 32px", class="media-object", src="images/info/pos.png")
                                     .media-body
-                                        br
-                                        p &nbsp;&nbsp;&nbsp; Längst upp i applikationen finns det en menyrad som har vit bakgrund.
-                                        h3 Funktionsmenyn
-                                        p Menyn innehåller tre funktioner. Varje funktion kan aktiveras genom respektive knapp. Mer information om de enskilda funktionerna finns i popup-fönstret som kommer upp vid aktivering av funktionen.
-                                        .media
-                                            .media-left
-                                                img(style="width: 64px; height: 64px", class="media-object", src="images/info/pos.png")
-                                            .media-body
-                                                p Funktionen “Min position” aktiverar positionering av användaren med hjälp av GPS.
-                                        .media
-                                            .media-left
-                                                img(style="width: 64px; height: 64px", class="media-object", src="images/info/rapport.png")
-                                            .media-body
-                                                p Funktionen “Rapportera” aktiverar rapportering av vägbommar. Användaren kan rapportera in vägbommar som saknas i kartan (men existerar i verkligheten) eller vägbommar som existerar i kartan (men saknas i verkligheten).
-                                        .media
-                                            .media-left
-                                                img(style="width: 64px; height: 64px", class="media-object", src="images/info/urval.png")
-                                            .media-body
-                                                p Funktionen “Urval” aktiverar val av individuella vägbommar i kartvyn för att få information om specifika vägbommar.
-                                        .media
-                                            .media-left
-                                                img(style="width: 64px; height: 64px", class="media-object", src="images/info/manual.png")
-                                            .media-body
-                                                p Funktionen “Manual” aktiverar val manualen.
-                                hr
+                                        button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#more_gps") Min position
+                                        #more_gps.collapse
+                                            br
+                                            ul
+                                                li Aktiverar GPS (Global Position System).
+                                                li Samlar data om GPS signal.
+                                                li Aktiverar GPS lagret i Lagerhanteraren.
+                                                li Flyttar till aktuell GPS position.
                                 .media
                                     .media-left
-                                        img(style="width: 64px; height: 64px", class="media-object", src="images/info/home.png")
+                                        img(style="width: 32px; height: 32px", class="media-object", src="images/info/rapport.png")
                                     .media-body
-                                        p Knappen längst till vänster (som innehåller ett hus) återställer kartan till dess ursprungliga position.
+                                        button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#more_rapport") Rapportera
+                                        #more_rapport.collapse
+                                            br
+                                            ol
+                                                li Klicka en gång i kartan för att ange position för vägbom.
+                                                li Se dig omkring och besvara frågan "Finns vägbommen i verkligheten?"
+                                                li Titta i kartan om du kan hitta kartsymbolen för vägbommen.
+                                                    img(style="width: 64px;", class="img-responsive", src="images/info/vagbom/vagbom_karta.png")
+                                                li Om du har accepterat att applikationen får använda din kamera, ta gärna en bild. Bilden kommer bifogas med rapporten.
+                                                li Rapportera
                                 .media
                                     .media-left
-                                        img(style="width: 64px; height: 64px", class="media-object", src="images/info/meny.png")
+                                        img(style="width: 32px; height: 32px", class="media-object", src="images/info/manual.png")
                                     .media-body
-                                        p På enheter med mindre skärmar (som exempelvis mobiltelefoner) finns det en knapp (som innehåller tre vågräta streck) som öppnar funktionsmenyn.
-                                        p På enheter med större skärmar finns funktionsmenyn längst till vänster i menyraden.
-                            #aboutTab.tab-pane(role='tabpanel')
-                                br
-                                .media
-                                    .media-left
-                                        a(href="https://hig.se")
-                                            img(style="width: 128px; height: 128px", class="media-object", src="images/info/hig.jpg")
-                                    .media-body
-                                        p Applikationen är utformat som del av ett examensarbete om 15 hp vid Högskolan i Gävle.
-                                        p För mer information om applikationen eller studien, kontakta någon av studiens författare:
-                                        a(href="mailto:danielgoloubev@gmail.com") Daniel Rasmussen
-                                        br
-                                        a(href="mailto:ofk14sus@student.hig.se") Sebastian Udenius
+                                        button.btn.btn-info.fixed-width(type="button", data-toggle="collapse", data-target="#more_manual") Manual
+                                        #more_manual.collapse
+                                            br
+                                            ul
+                                                li Aktiverar manualen.
                 .modal-footer
                     button.btn.btn-success(type='button',data-dismiss='modal', id='manual_modal_accept')| Kör igång!
                     button.btn.btn-danger(type='button',data-dismiss='modal', id='manual_modal_denied')| Läs senare.
