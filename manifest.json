@@ -1,0 +1,28 @@
+{
+  "name": "Duria.se",
+  "short_name": "Duria.se",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Examensarbete 2017.",
+  "icons": [{
+    "src": "images/favicon/android-icon-48x48.png",
+    "sizes": "48x48",
+    "type": "image/png"
+  }, {
+    "src": "images/favicon/android-icon-72x72.png",
+    "sizes": "72x72",
+    "type": "image/png"
+  }, {
+    "src": "images/favicon/android-icon-96x96.png",
+    "sizes": "96x96",
+    "type": "image/png"
+  }, {
+    "src": "images/favicon/apple-icon-144x144.png",
+    "sizes": "144x144",
+    "type": "image/png"
+  }],
+  "related_applications": [{
+    "platform": "web"
+  }]
+}
