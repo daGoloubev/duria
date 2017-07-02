@@ -14,9 +14,9 @@ function setup() {
         }
     });
     canvas.hide();
-    video = createCapture(VIDEO);
-    video.size(320, 240);
-    video.hide();
+    //video = createCapture(VIDEO);
+    //video.size(320, 240);
+
     button = createButton('Fotografera');
     button.mousePressed(takesnap);
     reset = createButton('Börja om.');
