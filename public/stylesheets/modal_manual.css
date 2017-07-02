@@ -1,6 +1,12 @@
 @media screen and (max-width: 960px) {
     #manual_modal ul.nav.nav-tabs a{
-        /* MEDIA QURIES NEEDED !!*/
         font-size: 10px;
+    }
+    #manual_modal h2.modal-title {
+        font-size: 15px;
+    }
+    .modal {
+        width: 100%;
+        margin-left: 0.1%;
     }
 }

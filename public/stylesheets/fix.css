@@ -23,5 +23,12 @@ label.list-group-item.checkbox-inline:first-child {
     margin-bottom: 4px;
 }
 .fixed-width {
-    width: 250px;
+    width: 100%;
+}
+.modal {
+    width: 50%;
+    margin-left: 25%;
+}
+#manual_modal {
+    overflow: hidden;
 }

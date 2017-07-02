@@ -229,7 +229,7 @@ function init(){
                     }))
                 }),
                 name: 'Points',
-                alias: 'Vägbommar (Alla)',
+                alias: 'Alla',
                 iconName: 'exclamation-triangle'
             }),
             new ol.layer.Vector({
@@ -244,7 +244,7 @@ function init(){
                     }))
                 }),
                 name: 'tabort_Points',
-                alias: 'Vägbommar (Ta bort)',
+                alias: 'Ta bort',
                 iconName: 'minus'
             }),
             new ol.layer.Vector({
@@ -257,7 +257,7 @@ function init(){
                     }))
                 }),
                 name: 'läggtill_Points',
-                alias: 'Vägbommar (Lägg till)',
+                alias: 'Lägg till',
                 iconName: 'plus'
             }),
             new ol.layer.Vector({
@@ -271,7 +271,7 @@ function init(){
                     }))
                 }),
                 name: 'finns_Points',
-                alias: 'Vägbommar (Finns)',
+                alias: 'Finns',
                 iconName: 'check'
             })
         ],
@@ -491,6 +491,13 @@ function init(){
     draw.on('drawend', function(evt){
         closeSelect();
         var c = evt.feature.getGeometry().getCoordinates();
+        if(windowWidth < 1200 && !layersOpen){
+            view.centerOn(c, map.getSize(), [getMarginX(windowWidth, -50), 400]);
+        } else if(windowWidth < 1200 && layersOpen){
+            view.centerOn(c, map.getSize(), [400, 400]);
+        } else {
+            view.setCenter(c);
+        }
         var t = ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
         var db_format = ol.coordinate.createStringXY(13);
         var f = db_format(t);
@@ -703,7 +710,7 @@ function init(){
      */
     $(window).one('load',function(){
         // VISA MANUALEN FÖRSTA GÅNGEN
-        $('#manual_modal').modal('show');
+        //$('#manual_modal').modal('show');
         if (navigator.getUserMedia) {
             navigator.getUserMedia({video: true, audio: false}, function(stream) {
             }, function(e) {
