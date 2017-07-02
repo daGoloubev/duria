@@ -16,7 +16,7 @@ function setup() {
     canvas.hide();
     video = createCapture(VIDEO);
     video.size(320, 240);
-
+    video.hide();
     button = createButton('Fotografera');
     button.mousePressed(takesnap);
     reset = createButton('Börja om.');

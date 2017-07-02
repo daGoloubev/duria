@@ -512,6 +512,7 @@ function init(){
         map.removeInteraction(draw);
         // empty Canvas.
         canvas.clear();
+        video.show();
         // Style button
         var sketchDiv = document.getElementById('sketch-holder');
         var snapButton = sketchDiv.getElementsByTagName('Button')[0];
