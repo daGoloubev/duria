@@ -525,7 +525,7 @@ function init(){
 
         if(windowWidth <= 441){
             var videoElement = sketchDiv.getElementsByTagName('video')[0];
-            videoElement.setAttribute('style', 'width: 100%; height: 480px; display: block;');
+            videoElement.setAttribute('style', 'width: 100%; height: 25%; display: block;');
         }
         /**
          * Disallow empty pictures.
