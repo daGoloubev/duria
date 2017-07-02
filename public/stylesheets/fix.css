@@ -1,4 +1,4 @@
-.modal-dialog{width: 90%;}
+.modal-dialog{ width: 90%; }
 label.list-group-item.checkbox-inline:first-child {
     margin-left: 10px;
 }
@@ -11,14 +11,7 @@ label.list-group-item.checkbox-inline:first-child {
 .hidden-to-db {
     display: none;
 }
-#sketch-holder{
-    width: 320px;
-    margin: 0 auto;
-}
-#sketch-holder button{
-    padding-left: 115px;
-    padding-right: 115px;
-}
+
 #popup-submit-submit{
     margin-bottom: 4px;
 }
@@ -26,9 +19,13 @@ label.list-group-item.checkbox-inline:first-child {
     width: 100%;
 }
 .modal {
-    width: 50%;
-    margin-left: 25%;
-}
+     width: 50%;
+     margin-left: 25%;
+ }
 #manual_modal {
     overflow: hidden;
+}
+#camera_modal {
+    overflow: hidden;
+    width: 420px;
 }

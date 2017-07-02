@@ -515,7 +515,17 @@ function init(){
         // Style button
         var sketchDiv = document.getElementById('sketch-holder');
         var snapButton = sketchDiv.getElementsByTagName('Button')[0];
-        snapButton.setAttribute('class', 'btn btn-info snapButton');
+        snapButton.setAttribute('class', 'btn btn-info fixed-width snapButton');
+        snapButton.setAttribute('style', 'margin-top: 10px;');
+        var resetButton = sketchDiv.getElementsByTagName('Button')[1];
+        resetButton.setAttribute('class', 'btn btn-warning fixed-width');
+        resetButton.setAttribute('style', 'margin-top: 10px;');
+        // Video
+
+        if(windowWidth <= 441){
+            var videoElement = sketchDiv.getElementsByTagName('video')[0];
+            videoElement.setAttribute('style', 'width: 100%; height: 480px; display: block;');
+        }
         /**
          * Disallow empty pictures.
          */
@@ -711,6 +721,7 @@ function init(){
     $(window).one('load',function(){
         // VISA MANUALEN FÖRSTA GÅNGEN
         //$('#manual_modal').modal('show');
+        //$('#camera_modal').modal('show');
         if (navigator.getUserMedia) {
             navigator.getUserMedia({video: true, audio: false}, function(stream) {
             }, function(e) {
@@ -787,8 +798,6 @@ function init(){
         }
         e.preventDefault()
     });
-
-
 }
 document.addEventListener('DOMContentLoaded', init);
 
