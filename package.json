@@ -15,5 +15,14 @@
     "pg": "*",
     "postgeo": "*",
     "serve-favicon": "~2.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daGoloubev/duria.git"
+  },
+  "author": "Daniel Rasmussen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daGoloubev/duria/issues"
   }
 }
