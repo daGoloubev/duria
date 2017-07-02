@@ -15,7 +15,7 @@ function setup() {
     });
     canvas.hide();
     //video = createCapture(VIDEO);
-    //video.size(320, 240);
+    video.size(320, 240);
 
     button = createButton('Fotografera');
     button.mousePressed(takesnap);
