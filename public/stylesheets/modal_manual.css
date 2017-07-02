@@ -9,4 +9,7 @@
         width: 100%;
         margin-left: 0.1%;
     }
+    #camera_modal {
+        width: 420px;
+    }
 }
