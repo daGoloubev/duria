@@ -17,14 +17,11 @@ label.list-group-item.checkbox-inline:first-child {
 .fixed-width {
     width: 100%;
 }
-.modal {
+/*.modal {
      width: 50%;
      margin-left: 25%;
  }
-#manual_modal {
-    overflow: hidden;
-}
 #camera_modal {
-    overflow: hidden;
     width: 420px;
 }
+*/
