@@ -120,6 +120,24 @@ function init(){
     var läggtill_pointsSource = new ol.source.Vector();
     var tabort_pointsSource = new ol.source.Vector();
 
+    /**
+     * Reverse - from lowest to highest
+     * IDC - Id Compare
+     * Used with arr.sort(compare).
+     * arr - is a JSON Object with properties and id.
+     */
+    function reverseIDC(a, b) {
+        var i = a.properties.id;
+        var ii = b.properties.id;
+        var c = 0;
+        if (i > ii) {
+            c = 1;
+        } else if (i < ii) {
+            c = -1;
+        }
+        return c;
+    }
+
     var pointsSource = new ol.source.Vector({
         //strategy: ol.loadingstrategy.bbox,
         strategy: ol.loadingstrategy.all,
@@ -150,17 +168,25 @@ function init(){
                 });
                 // Create mediaBook
                 var step = 1;
-                var length = features.length - 1;
+                //var length = features.length - 1;
+                var length = features.length;
+                // SORTERA DATA
+                features = features.sort(reverseIDC);
+                //features.forEach(function(i){
+               //    console.log(i.properties.id);
+                //})
                 var page = [];
                 while (length > - 1) {
                     // save last
-                    var last = features[length];
+                    var last = features[length - 1];
                         // Add to page.
                             if(page.length < rss_items){
+                                //console.log(last.properties.id);
                                 page.push(last);
                             } else {
                                 media_book.push(page);
                                 page = [];
+                                page.push(last);
                             }
                     // remove last
                     features.pop();
@@ -168,7 +194,9 @@ function init(){
                     length = length - step;
                 }
                 media_book.push(page);
+                //console.log(media_book[1][0]);
                 $('#feed_total_page_number').text(String(media_book.length));
+
                 fillMediaData(rss_items)
             });
         }
@@ -365,7 +393,8 @@ function init(){
     //////////////////////// FUNCTIONS ////////////////////////////////
     function fillMediaData(n){
         for(var i = 0; i < n; i++){
-            setMediaData(i, media_book[start_page][i]);
+            if(media_book[start_page][i] !== undefined)
+                setMediaData(i, media_book[start_page][i]);
         }
     }
     function setMediaData(p, f){
@@ -679,18 +708,28 @@ function init(){
             var t = (start_page + 1) <= media_book.length ? (start_page + 1) : start_page;
             $('#current_page').text(String(t));
             if (start_page !== media_book.length){
-                //om längden är 5
                 if(media_book.length === rss_items){
-                    // fyll på 5
                     fillMediaData(rss_items);
                 } else {
                     // fyll på med resten
                     // gör resten osynliga
                     // fillMediaData(media_book.length);
                     var rest = rss_items - media_book[start_page].length;
-                    for(var i = 0; i < rest; i++){
-                        var id = String((rest - i))+"_media_post";
+                    //fillMediaData(rest);
+                    //if(rest == 1){
+                    //    document.getElementById('1_media_post').remove();
+                    //    document.getElementById('2_media_post').remove();
+                    //} else if(rest == 2){
+                    //    document.getElementById('2_media_post').remove();
+                    //}
+                    // remove resten
+                    // om resten är 1 då ska 2,1 bort
+                    // om resten är 2 då ska 2 bort
+
+                    for(var i = (rss_items - 1); i > (rest - 1); i--){
+                        var id = String(i)+"_media_post";
                         $("#"+id).css('display', 'none');
+                        //console.log(id);
                     }
                     fillMediaData(media_book[start_page].length);
                 }
