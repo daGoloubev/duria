@@ -610,6 +610,7 @@ function init(){
      */
     var min_pos_info_show = false;
     $('#Min_position').on('click', function(){
+        $('#meny').collapse('hide');
         if(min_pos_info_show){
             view.animate({
                 center: geolocation.getPosition(),
