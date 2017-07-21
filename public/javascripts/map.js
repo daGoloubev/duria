@@ -590,7 +590,8 @@ function init(){
         min_pos_info_show = false;
     });
     geolocation.on('change', function(){
-       $('#accuracy').innerHTML = geolocation.getAccuracy() !== undefined ? 'Noggrannhet: '+geolocation.getAccuracy() + ' m': 'Noggrannhet: - m';
+       //$('#accuracy').innerHTML = geolocation.getAccuracy() !== undefined ? 'Noggrannhet: '+geolocation.getAccuracy() + ' m': 'Noggrannhet: - m';
+        $('#accuracy').html(geolocation.getAccuracy() !== undefined ? 'Noggrannhet: '+geolocation.getAccuracy() + ' m': 'Noggrannhet: - m');
     });
     geolocation.on('error', function(error){
         tree.showErrorMsg(error.message);
@@ -601,6 +602,7 @@ function init(){
     geolocation.on('change:position', function() {
         var coordinates = new ol.geom.Point(ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326'));
         positionFeature.setGeometry(coordinates ? coordinates : null);
+        view.setCenter(coordinates ? coordinates : null);
     });
     /**
      * Attach event to 'Min position'
