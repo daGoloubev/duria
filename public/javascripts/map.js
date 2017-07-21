@@ -602,7 +602,7 @@ function init(){
     geolocation.on('change:position', function() {
         var coordinates = new ol.geom.Point(ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326'));
         positionFeature.setGeometry(coordinates ? coordinates : null);
-        view.setCenter(coordinates ? coordinates : null);
+
     });
     /**
      * Attach event to 'Min position'
