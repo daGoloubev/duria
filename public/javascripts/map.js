@@ -570,11 +570,11 @@ function init(){
     document.getElementById('geolocation_modal_accept').addEventListener('click', function(){
         $('#meny').collapse('hide');
         geolocation.setTracking(true);
-        view.animate({
-            center: geolocation.getPosition(),
-            zoom: 18,
-            duration: 2000
-        });
+        //view.animate({
+        //    center: geolocation.getPosition(),
+        //    zoom: 18,
+        //    duration: 2000
+        //});
         min_pos_info_show = true;
     });
     $('#geolocation_modal_denied').on('click', function(){
