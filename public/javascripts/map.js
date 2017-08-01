@@ -195,7 +195,7 @@ function init(){
                     length = length - step;
                 }
                 media_book.push(page);
-                console.log(media_book);
+                //console.log(media_book);
                 $('#feed_total_page_number').text(String(media_book.length));
                 fillMediaData(rss_items)
             });
