@@ -85,8 +85,9 @@ function init(){
     var date_string = String(date.getFullYear())+'-'+String(date.getMonth())+'-'+String(date.getDate());
 
     var view = new ol.View({
-        center: [1908533.467, 8551296.993],
-        zoom: 13,
+        //center: [1908533.467, 8551296.993],
+        center: [1903698.0716785786, 8548411.526340589],
+        zoom: 16,
         minZoom: 4,
         maxZoom: 19
     });
@@ -176,7 +177,7 @@ function init(){
                //    console.log(i.properties.id);
                 //})
                 var page = [];
-                while (length > - 1) {
+                while (length > 0) {
                     // save last
                     var last = features[length - 1];
                         // Add to page.
@@ -194,9 +195,8 @@ function init(){
                     length = length - step;
                 }
                 media_book.push(page);
-                //console.log(media_book[1][0]);
+                console.log(media_book);
                 $('#feed_total_page_number').text(String(media_book.length));
-
                 fillMediaData(rss_items)
             });
         }
@@ -310,7 +310,7 @@ function init(){
             //        //var y = coordinates[1].toFixed(3);
             //       var x = coordinates[0];
             //       var y = coordinates[1];
-            //       //console.log(x + ' ' + y);
+            //       console.log(x + ' ' + y);
             //        return x + ' ' + y;
             //        //var t = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
             //        //var sf = ol.coordinate.createStringXY(2);
@@ -393,8 +393,9 @@ function init(){
     //////////////////////// FUNCTIONS ////////////////////////////////
     function fillMediaData(n){
         for(var i = 0; i < n; i++){
-            if(media_book[start_page][i] !== undefined)
+            if(media_book[start_page][i] !== undefined) {
                 setMediaData(i, media_book[start_page][i]);
+            }
         }
     }
     function setMediaData(p, f){
@@ -702,6 +703,12 @@ function init(){
                     }
                 }
                 fillMediaData(rss_items);
+                var rest = rss_items - media_book[start_page].length;
+                if(rest == 0){
+                    $('#0_media_post').css('display', 'block');
+                    $('#1_media_post').css('display', 'block');
+                    $('#2_media_post').css('display', 'block');
+                }
             }
         }
     });
@@ -714,29 +721,29 @@ function init(){
                 if(media_book.length === rss_items){
                     fillMediaData(rss_items);
                 } else {
-                    // fyll på med resten
+                    fillMediaData(media_book[start_page].length);
                     // gör resten osynliga
                     // fillMediaData(media_book.length);
                     var rest = rss_items - media_book[start_page].length;
-                    //fillMediaData(rest);
-                    //if(rest == 1){
-                    //    document.getElementById('1_media_post').remove();
-                    //    document.getElementById('2_media_post').remove();
-                    //} else if(rest == 2){
-                    //    document.getElementById('2_media_post').remove();
-                    //}
+                    if(rest == 1){
+                        $('#2_media_post').css('display', 'none');
+                    } else if(rest == 2){
+                        $('#1_media_post').css('display', 'none');
+                        $('#2_media_post').css('display', 'none');
+                    }
                     // remove resten
+                    // om rest är 0 visa alla
                     // om resten är 1 då ska 2,1 bort
                     // om resten är 2 då ska 2 bort
 
-                    for(var i = (rss_items - 1); i > (rest - 1); i--){
-                        var id = String(i)+"_media_post";
-                        $("#"+id).css('display', 'none');
-                        //console.log(id);
-                    }
-                    fillMediaData(media_book[start_page].length);
+                    //for(var i = (rss_items - 1); i > (rest - 1); i--){
+                    //    var id = String(i)+"_media_post";
+                    //    $("#"+id).css('display', 'none');
+                    //    //console.log(id);
+                    //}
+
+                    //fillMediaData(media_book[start_page].length);
                 }
-                //console.log(media_book[start_page].length);
             }
         }
     });

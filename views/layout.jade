@@ -63,7 +63,7 @@ html(lang="se")
         if (    falt == "" && karta == "" ||
                 falt == "" && karta != "" ||
                 falt != "" && karta == "" ||
-                karta == "Nej" && falt == "Nej") {
+                karta == "Nej" && falt == "Nej" ) {
             $('#status_modal').modal('show');
             return false;
         } else if (karta == 'Ja' && falt == 'Ja'){
@@ -88,7 +88,7 @@ html(lang="se")
                 $('#tabort_modal').modal('hide');
             });
             if (sure) {
-                return status.attr('value', 'LäggTill');
+                return status.attr('value', 'TaBort');
             } else {
                 return false;
             }
@@ -96,12 +96,12 @@ html(lang="se")
             if (!sure) {
                 $('#läggtill_modal').modal('show');
             }
-            $('#läggtill_accept').on('click', function () {
+            $('#läggtill_modal_accept').on('click', function () {
                 sure = true;
                 $('#läggtill_modal').modal('hide');
             });
             if (sure) {
-                return status.attr('value', 'TaBort');
+                return status.attr('value', 'LäggTill');
             } else {
                 return false;
             }
