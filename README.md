@@ -1,4 +1,4 @@
 # [duria.se](https://duria.se)
-# Addressen för applikationen.
+# Duria
 Denna webb applikation tillåter in-rapportering av väghinder.
 Användargränssnittet har evaluerats i ett användbarhetstest.
